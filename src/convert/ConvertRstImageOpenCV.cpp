@@ -31,17 +31,17 @@ ConvertRstImageOpenCV::ConvertRstImageOpenCV(const Type& type)
 
 ConvertRstImageOpenCV::CodedPtr ConvertRstImageOpenCV::encode(const boost::shared_ptr<IplImage> image) {
   try {
+    auto time = boost::get_system_time();
     cv::Mat mat(image.get(),false);
     std::vector<unsigned char> result;
     int bmpsize = mat.total() * 3;
     CodedPtr resultImg(rstexperimental::vision::EncodedImage::default_instance().New());
     resultImg->set_encoding((rstexperimental::vision::EncodedImage_Encoding) m_Encoding);
-    auto time = boost::get_system_time();
     cv::imencode(m_TypeString,mat,result);
+    resultImg->set_data(result.data(),result.size());
     std::cerr << m_TypeString << " c.f.: " << std::setprecision(4) << std::fixed
               << result.size() / (double) bmpsize << " ( in "
               << (boost::get_system_time() - time).total_nanoseconds() / 1000000. << "ms)" << std::endl;
-    resultImg->set_data(result.data(),result.size());
     return resultImg;
   } catch (std::exception& e){
     std::stringstream error;
@@ -64,10 +64,14 @@ public:
 
 ConvertRstImageOpenCV::UncodedPtr ConvertRstImageOpenCV::decode(const ConvertRstImageOpenCV::CodedPtr image) {
   try {
+    auto time = boost::get_system_time();
     std::vector<unsigned char> tmp; tmp.resize(image->data().size());
     std::copy(image->data().begin(), image->data().end(), tmp.begin());
     boost::shared_ptr<cv::Mat> mat(new cv::Mat());
     cv::imdecode(tmp,cv::IMREAD_UNCHANGED,mat.get());
+    std::cerr << typeToString((Type) image->encoding()) << " i.f.: " << std::setprecision(4) << std::fixed
+              << mat->total() * 3 / (double) image->data().size() << " ( in "
+              << (boost::get_system_time() - time).total_nanoseconds() / 1000000. << "ms)" << std::endl;
     return UncodedPtr(new IplImage(*mat),CustomDeleter(mat));
   } catch (std::exception& e){
     std::stringstream error;
