@@ -50,13 +50,25 @@ ConvertRstImageOpenCV::CodedPtr ConvertRstImageOpenCV::encode(const boost::share
   }
 }
 
+class CustomDeleter {
+private:
+  boost::shared_ptr<cv::Mat> mat;
+public:
+
+  CustomDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
+
+  void operator()(IplImage* img) {
+    delete img;
+  }
+};
 
 ConvertRstImageOpenCV::UncodedPtr ConvertRstImageOpenCV::decode(const ConvertRstImageOpenCV::CodedPtr image) {
   try {
     std::vector<unsigned char> tmp; tmp.resize(image->data().size());
     std::copy(image->data().begin(), image->data().end(), tmp.begin());
-    cv::Mat mat = cv::imdecode(tmp,cv::IMREAD_UNCHANGED);
-    return UncodedPtr(new IplImage(mat));
+    boost::shared_ptr<cv::Mat> mat(new cv::Mat());
+    cv::imdecode(tmp,cv::IMREAD_UNCHANGED,mat.get());
+    return UncodedPtr(new IplImage(*mat),CustomDeleter(mat));
   } catch (std::exception& e){
     std::stringstream error;
     error << "Cannot decode image with encoding: " << image->encoding() << "  - " << e.what();
