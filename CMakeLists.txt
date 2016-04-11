@@ -174,6 +174,13 @@ target_link_libraries(${PROJECT_NAME}
   ${ROS_LIBRARIES}
   ${ZLIB_LIBRARIES}
 )
+install(TARGETS "${PROJECT_NAME}"
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib/static
+        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE
+)
+
 
 ######  creating executables #####
 foreach(APP ${APPS})
