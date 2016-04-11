@@ -167,6 +167,7 @@ link_directories(${ROS_LIBRARY_DIRS})
 #add rst definitions
 add_definitions(${RSB_DEFINITIONS})
 
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 #create library
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_NAME}
