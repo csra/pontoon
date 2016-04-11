@@ -41,9 +41,9 @@ int main(int argc, char **argv){
        boost::program_options::value<std::string>()->default_value("/topic"),
        "The ros topic to listen to for images.")
 
-      ("output-scope,o",
+      ("output-url,o",
        boost::program_options::value<std::string>()->default_value("/scope"),
-       "The rsb scope to publish images to.")
+       "The rsb url to publish images to.")
 
       ;
 

@@ -19,9 +19,9 @@
 
 using io::rst::ListenerCVImage;
 
-ListenerCVImage::ListenerCVImage(const std::string& scope)
+ListenerCVImage::ListenerCVImage(const std::string& url)
 {
-  m_Listener = utils::rsbhelpers::createListener(scope);
+  m_Listener = utils::rsbhelpers::createListener(url);
   m_Handler = boost::make_shared<rsb::EventFunctionHandler>(boost::bind(&ListenerCVImage::handle,this,_1));
   m_Listener->addHandler(m_Handler);
 }

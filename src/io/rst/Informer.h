@@ -34,9 +34,9 @@ public:
   typedef RST DataType;
   typedef boost::shared_ptr<RST> DataPtr;
 
-  Informer(const std::string& scope){
+  Informer(const std::string& url){
     utils::rsbhelpers::register_rst<RST>();
-    m_Informer = utils::rsbhelpers::createInformer<RST>(scope);
+    m_Informer = utils::rsbhelpers::createInformer<RST>(url);
   }
 
   virtual ~Informer(){

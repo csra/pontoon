@@ -36,11 +36,11 @@ public:
   typedef RST DataType;
   typedef boost::shared_ptr<RST> DataPtr;
 
-  Listener(const std::string& scope)
+  Listener(const std::string& url)
     : m_Type(rsc::runtime::typeName(typeid(RST)))
   {
     utils::rsbhelpers::register_rst<RST>();
-    m_Listener = utils::rsbhelpers::createListener(scope);
+    m_Listener = utils::rsbhelpers::createListener(url);
     m_Handler = boost::make_shared<rsb::EventFunctionHandler>(boost::bind(&Listener<RST>::handle,this,_1));
     m_Listener->addHandler(m_Handler);
   }

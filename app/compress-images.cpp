@@ -38,13 +38,13 @@ int main(int argc, char **argv){
   desc.add_options()
       ("help,h","produce help message")
 
-      ("input-scope,i",
+      ("input-url,i",
        boost::program_options::value<std::string>()->default_value("/video/raw"),
-       "The input scope to receive raw images.")
+       "The input rsb url to receive raw images.")
 
-      ("output-scope,o",
+      ("output-url,o",
        boost::program_options::value<std::string>()->default_value("/video/compressed"),
-       "The output scope to publish compressed images.")
+       "The output rsb url to publish compressed images.")
 
       ("encoding,e",
        boost::program_options::value<std::string>()->default_value("jpg"),

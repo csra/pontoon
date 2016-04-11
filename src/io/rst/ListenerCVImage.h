@@ -37,7 +37,7 @@ public:
   typedef IplImage DataType;
   typedef boost::shared_ptr<IplImage> DataPtr;
 
-  ListenerCVImage(const std::string& scope);
+  ListenerCVImage(const std::string& url);
 
   ~ListenerCVImage();
 
