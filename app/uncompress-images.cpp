@@ -71,8 +71,8 @@ int main(int argc, char **argv){
     return 1;
   }
 
-  const std::string  in_scope = program_options["input-scope" ].as<std::string>();
-  const std::string out_scope = program_options["output-scope"].as<std::string>();
+  const std::string  in_scope = program_options["input-url" ].as<std::string>();
+  const std::string out_scope = program_options["output-url"].as<std::string>();
 
   // init rsb components
   auto in = std::make_shared<ImageListener>(in_scope);

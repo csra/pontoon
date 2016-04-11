@@ -73,7 +73,7 @@ int main(int argc, char **argv){
   }
 
   const std::string input = program_options["input-topic"].as<std::string>();
-  const std::string output = program_options["output-scope"].as<std::string>();
+  const std::string output = program_options["output-url"].as<std::string>();
 
   auto rosImageSource = std::make_shared<io::ros::ImageListener>(input);
   auto rsbInformer = std::make_shared<io::rst::Informer<rst::vision::Image>>(output);
