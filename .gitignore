@@ -89,7 +89,7 @@ latex/talk/sections/*.aux
 
 # Build files from c++ project #
 ################################
-build
+build*
 build/*
 debug.build/*
 release.build/*
