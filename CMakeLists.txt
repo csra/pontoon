@@ -127,7 +127,7 @@ message(STATUS "Looking for doxygen")
 find_program(DOXYGEN_BIN NAMES doxygen)
 if(NOT "${DOXYGEN_BIN}" STREQUAL "DOXYGEN_BIN-NOTFOUND")
   message(STATUS "found Doxygen, a documentation can be built with 'make doc'")
-  add_custom_target(doc
+  add_custom_target(doc ALL
     COMMAND ${DOXYGEN_BIN} ${PROJECT_BINARY_DIR}/Doxyfile
     COMMENT "Creating html and tex documentation in doc/"
   )
