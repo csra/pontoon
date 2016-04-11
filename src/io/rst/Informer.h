@@ -36,7 +36,7 @@ public:
 
   Informer(const std::string& scope){
     utils::rsbhelpers::register_rst<RST>();
-    m_Informer = rsb::getFactory().createInformer<RST>(scope);
+    m_Informer = utils::rsbhelpers::createInformer<RST>(scope);
   }
 
   virtual ~Informer(){

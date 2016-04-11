@@ -37,7 +37,7 @@ public:
   typedef boost::shared_ptr<DataType> DataPtr;
 
   InformerCVImage(const std::string& scope){
-    m_Informer = rsb::getFactory().createInformer<DataType>(scope);
+    m_Informer = utils::rsbhelpers::createInformer<DataType>(scope);
   }
 
   virtual ~InformerCVImage(){

@@ -40,7 +40,7 @@ public:
     : m_Type(rsc::runtime::typeName(typeid(RST)))
   {
     utils::rsbhelpers::register_rst<RST>();
-    m_Listener = rsb::getFactory().createListener(scope);
+    m_Listener = utils::rsbhelpers::createListener(scope);
     m_Handler = boost::make_shared<rsb::EventFunctionHandler>(boost::bind(&Listener<RST>::handle,this,_1));
     m_Listener->addHandler(m_Handler);
   }
