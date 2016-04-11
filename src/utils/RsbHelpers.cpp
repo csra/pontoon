@@ -198,7 +198,6 @@ struct uri_builder : qi::grammar<std::string::const_iterator, uri()> {
   qi::rule<iterator, std::string()> pct_encoded;
 };
 
-#include <iterator>
 using namespace std;
 uri::uri (const std::string& source) {
   static uri_builder grammar;
