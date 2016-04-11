@@ -26,6 +26,8 @@
 typedef io::rst::ListenerCVImage ImageListener;
 typedef io::rst::Informer<rstexperimental::vision::EncodedImage> ImageInformer;
 
+
+
 int main(int argc, char **argv){
   boost::program_options::variables_map program_options;
 
@@ -43,6 +45,10 @@ int main(int argc, char **argv){
       ("output-scope,o",
        boost::program_options::value<std::string>()->default_value("/video/compressed"),
        "The output scope to publish compressed images.")
+
+      ("encoding,e",
+       boost::program_options::value<std::string>()->default_value("jpg"),
+       "The output encoding to use. Can be on of ( bmp | ppm | png | jpg | jp2 | tiff ).")
 
       ;
 
@@ -74,11 +80,14 @@ int main(int argc, char **argv){
   const std::string  in_scope = program_options["input-scope" ].as<std::string>();
   const std::string out_scope = program_options["output-scope"].as<std::string>();
 
+  const convert::ConvertRstImageOpenCV::Type encoding =  convert::ConvertRstImageOpenCV::stringToType(
+      program_options["encoding"].as<std::string>());
+
   // init rsb components
   auto in = std::make_shared<ImageListener>(in_scope);
   auto out = std::make_shared<ImageInformer>(out_scope);
 
-  convert::ConvertRstImageOpenCV compress(convert::ConvertRstImageOpenCV::Type::jpg);
+  convert::ConvertRstImageOpenCV compress(encoding);
   auto connection = in->connect([&compress, &out] (ImageListener::DataPtr image) {
                                       out->publish(compress.encode(image));
                                     });
