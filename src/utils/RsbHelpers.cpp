@@ -256,21 +256,20 @@ std::tuple<rsb::Scope,rsb::ParticipantConfig> utils::rsbhelpers::parseUri(const 
   if(parsed.scheme() == ""){
     return std::tuple<rsb::Scope,rsb::ParticipantConfig>(rsb::Scope(uri),config);
   } else {
-    std::set<rsb::ParticipantConfig::Transport> transports = config.getTransports(true);
-    for (rsb::ParticipantConfig::Transport ttransport : transports){
-      rsb::ParticipantConfig::Transport& transport = config.mutableTransport(ttransport.getName());
-      if(transport.getName() != parsed.scheme()){
-        transport.setEnabled(false);
-      } else {
-        transport.setEnabled(true);
-        rsc::runtime::Properties options;
-        for (auto it = parsed.query.begin(), end = parsed.query.end(); it != end; ++it) {
-          options[it->first] = it->second;
-        }
-        transport.setOptions(options);
-      }
+    rsb::ParticipantConfig updated = config;
+    std::set<rsb::ParticipantConfig::Transport> transports = updated.getTransports(true);
+    for (rsb::ParticipantConfig::Transport transport_name : transports){
+      rsb::ParticipantConfig::Transport& transport = updated.mutableTransport(transport_name.getName());
+      transport.setEnabled(false);
     }
-    return std::tuple<rsb::Scope,rsb::ParticipantConfig>(rsb::Scope(parsed.path()),config);
+    rsb::ParticipantConfig::Transport& transport = updated.mutableTransport(parsed.scheme());
+    transport.setEnabled(true);
+    rsc::runtime::Properties& options = updated.mutableOptions();
+    for (auto it = parsed.query.begin(), end = parsed.query.end(); it != end; ++it) {
+      options[it->first] = it->second;
+    }
+    transport.setOptions(options);
+    return std::tuple<rsb::Scope,rsb::ParticipantConfig>(rsb::Scope(parsed.path()),updated);
   }
 }
 
