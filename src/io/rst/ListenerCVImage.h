@@ -20,28 +20,26 @@
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
 #include <rsb/Listener.h>
+#include <rsc/runtime/TypeStringTools.h>
+#include <rstexperimental/vision/EncodedImage.pb.h>
+
+#include <io/rst/Listener.h>
 #include <utils/RsbHelpers.h>
 #include <utils/Subject.h>
-#include <rsc/runtime/TypeStringTools.h>
-#include <boost/make_shared.hpp>
+
 #include <opencv2/core/types_c.h>
 
+#include <boost/make_shared.hpp>
 
 namespace pontoon {
 namespace io {
 namespace rst {
 
-class ListenerCVImage : public utils::Subject<boost::shared_ptr<IplImage>>{
+class ListenerCVImageRstImage : public pontoon::utils::Subject<boost::shared_ptr<IplImage>>{
 public:
-  typedef boost::shared_ptr<IplImage> ImagePtr;
+  ListenerCVImageRstImage(const std::string& uri);
 
-  typedef std::shared_ptr<ListenerCVImage> Ptr;
-  typedef IplImage DataType;
-  typedef boost::shared_ptr<IplImage> DataPtr;
-
-  ListenerCVImage(const std::string& url);
-
-  ~ListenerCVImage();
+  ~ListenerCVImageRstImage();
 
 private:
   rsb::ListenerPtr m_Listener;
@@ -49,6 +47,27 @@ private:
 
   void handle(rsb::EventPtr data);
 };
+
+class ListenerCVImageRstEncodedImage : public pontoon::utils::Subject<boost::shared_ptr<IplImage>>{
+public:
+
+  ListenerCVImageRstEncodedImage(const std::string& uri);
+
+  ~ListenerCVImageRstEncodedImage();
+
+private:
+  typedef pontoon::io::rst::Listener<rstexperimental::vision::EncodedImage> ListenerType;
+  ListenerType m_Listener;
+  ListenerType::Connection m_Connection;
+};
+
+class CombinedCVImageListener : public pontoon::utils::CompositeSubject<boost::shared_ptr<IplImage>>{
+public:
+  CombinedCVImageListener(const std::string& uri);
+
+  ~CombinedCVImageListener() = default;
+};
+
 
 } // namespace rst
 } // namespace io
