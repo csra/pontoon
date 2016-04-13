@@ -36,7 +36,7 @@ namespace {
       case 32:
         return rst::vision::Image::DEPTH_32F;
       default:
-        throw utils::Exception(std::string("Cannot match channel depth from '")
+        throw Exception(std::string("Cannot match channel depth from '")
                                + src->encoding + std::string("' to rst-depth."));
     }
   }
@@ -51,7 +51,7 @@ namespace {
     if(startsWith(src->encoding,"bgr"))  return rst::vision::Image::COLOR_BGR;
     if(startsWith(src->encoding,"bgr"))  return rst::vision::Image::COLOR_BGR;
     if(src->encoding == sensor_msgs::image_encodings::YUV422) return rst::vision::Image::COLOR_YUV422;
-    throw utils::Exception(std::string("Cannot match color mode from '"
+    throw Exception(std::string("Cannot match color mode from '"
                                        + src->encoding + std::string("' to rst-color-mode.")));
   }
 
@@ -61,7 +61,7 @@ namespace {
 
 }
 
-boost::shared_ptr<rst::vision::Image> convert::ConvertRstRosImage::convert(const sensor_msgs::ImageConstPtr src){
+boost::shared_ptr<rst::vision::Image> ConvertRstRosImage::convert(const sensor_msgs::ImageConstPtr src){
   typedef rst::vision::Image RstImage;
   typedef boost::shared_ptr<RstImage> RstImagePtr;
   typedef sensor_msgs::ImageConstPtr RosImagePtr;
