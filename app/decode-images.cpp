@@ -1,6 +1,6 @@
 /********************************************************************
 **                                                                 **
-** File   : app/ucompress-images.cpp                               **
+** File   : app/decode-images.cpp                                  **
 ** Authors: Viktor Richter                                         **
 **                                                                 **
 **                                                                 **
@@ -29,7 +29,7 @@ typedef pontoon::io::rst::InformerCVImage ImageInformer;
 int main(int argc, char **argv){
   boost::program_options::variables_map program_options;
 
-  std::string description = "This application listens for published compressed images and publishes raw versions.";
+  std::string description = "This application listens for published encoded images and publishes raw versions.";
   std::stringstream description_text;
   description_text << description << "\n\n" << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
@@ -37,8 +37,8 @@ int main(int argc, char **argv){
       ("help,h","produce help message")
 
       ("input-url,i",
-       boost::program_options::value<std::string>()->default_value("/video/compressed"),
-       "The input rsb url to receive compressed images.")
+       boost::program_options::value<std::string>()->default_value("/video/encoded"),
+       "The input rsb url to receive encoded images.")
 
       ("output-url,o",
        boost::program_options::value<std::string>()->default_value("/video/raw"),

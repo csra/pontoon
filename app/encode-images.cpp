@@ -1,6 +1,6 @@
 /********************************************************************
 **                                                                 **
-** File   : app/compress-images.cpp                                **
+** File   : app/encode-images.cpp                                  **
 ** Authors: Viktor Richter                                         **
 **                                                                 **
 **                                                                 **
@@ -32,7 +32,7 @@ using pontoon::convert::EncodeRstVisionImage;
 int main(int argc, char **argv){
   boost::program_options::variables_map program_options;
 
-  std::string description = "This application listens for published images and publishes compressed versions.";
+  std::string description = "This application listens for published images and publishes encoded versions.";
   std::stringstream description_text;
   description_text << description << "\n\n" << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
@@ -44,8 +44,8 @@ int main(int argc, char **argv){
        "The input rsb url to receive raw images.")
 
       ("output-url,o",
-       boost::program_options::value<std::string>()->default_value("/video/compressed"),
-       "The output rsb url to publish compressed images.")
+       boost::program_options::value<std::string>()->default_value("/video/encoded"),
+       "The output rsb url to publish encoded images.")
 
       ("encoding,e",
        boost::program_options::value<std::string>()->default_value("jpg"),
