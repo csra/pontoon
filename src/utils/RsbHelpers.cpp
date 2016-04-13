@@ -249,12 +249,18 @@ std::string uri::port() const {
 
 #include <utils/RsbHelpers.h>
 
-std::tuple<rsb::Scope,rsb::ParticipantConfig> utils::rsbhelpers::parseUri(const std::string& uri,
-                                                                          rsb::ParticipantConfig config)
-{
+
+rsb::Scope pontoon::utils::rsbhelpers::parseScope(const std::string& uri){
   rsc::misc::uri parsed(uri);
+  return rsb::Scope(parsed.path());
+}
+
+rsb::ParticipantConfig pontoon::utils::rsbhelpers::parseConfig(const std::string& uri, rsb::ParticipantConfig config){
+  rsc::misc::uri parsed(uri);
+  std::cout << "Config: " << config <<  "\n\n" << std::endl;
   if(parsed.scheme() == ""){
-    return std::tuple<rsb::Scope,rsb::ParticipantConfig>(rsb::Scope(uri),config);
+    std::cout << "Not changed\n\n" << std::endl;
+    return config;
   } else {
     rsb::ParticipantConfig updated = config;
     std::set<rsb::ParticipantConfig::Transport> transports = updated.getTransports(true);
@@ -264,13 +270,20 @@ std::tuple<rsb::Scope,rsb::ParticipantConfig> utils::rsbhelpers::parseUri(const 
     }
     rsb::ParticipantConfig::Transport& transport = updated.mutableTransport(parsed.scheme());
     transport.setEnabled(true);
-    rsc::runtime::Properties& options = updated.mutableOptions();
+    rsc::runtime::Properties& options = transport.mutableOptions();
     for (auto it = parsed.query.begin(), end = parsed.query.end(); it != end; ++it) {
       options[it->first] = it->second;
     }
-    transport.setOptions(options);
-    return std::tuple<rsb::Scope,rsb::ParticipantConfig>(rsb::Scope(parsed.path()),updated);
+    //transport.setOptions(options);
+    std::cout << "changed: " << updated << "\n\n" << std::endl;
+    return updated;
   }
+}
+
+std::tuple<rsb::Scope,rsb::ParticipantConfig> pontoon::utils::rsbhelpers::parseUri(
+    const std::string& uri, rsb::ParticipantConfig config)
+{
+  return std::tuple<rsb::Scope,rsb::ParticipantConfig>(parseScope(uri),parseConfig(uri,config));
 }
 
 
