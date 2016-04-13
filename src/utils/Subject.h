@@ -52,5 +52,27 @@ private:
     Signal m_Signal;
 };
 
+template<typename Data>
+class CompositeSubject : public Subject<Data> {
+public:
+  CompositeSubject(const std::vector<typename Subject<Data>::Ptr> subjects)
+   : m_Subjects(subjects)
+  {
+    for (auto s : subjects){
+      m_Connections.push_back(s->connect([this] (Data data) {this->notify(data);}));
+    }
+  }
+
+  virtual ~CompositeSubject(){
+    for(auto c : m_Connections){
+      c.disconnect();
+    }
+  }
+
+private:
+  std::vector<typename Subject<Data>::Ptr> m_Subjects;
+  std::vector<typename Subject<Data>::Connection> m_Connections;
+};
+
 } // namespace utils
 } // namespace pontoon
