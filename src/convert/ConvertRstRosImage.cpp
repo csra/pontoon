@@ -21,6 +21,9 @@
 
 #include <utils/Exception.h>
 
+using pontoon::utils::Exception;
+using pontoon::convert::ConvertRstRosImage;
+
 namespace {
 
   int rstChannels(const sensor_msgs::ImageConstPtr& src){
@@ -80,6 +83,6 @@ boost::shared_ptr<rst::vision::Image> ConvertRstRosImage::convert(const sensor_m
   return image;
 }
 
-sensor_msgs::ImageConstPtr convert::ConvertRstRosImage::convert(boost::shared_ptr<rst::vision::Image> src){
-  throw utils::Exception("Function not implemented.");
+sensor_msgs::ImageConstPtr ConvertRstRosImage::convert(boost::shared_ptr<rst::vision::Image> src){
+  throw Exception("Function not implemented.");
 }
