@@ -26,6 +26,7 @@
 
 #include <utils/Subject.h>
 
+namespace pontoon {
 namespace convert {
 
   class ConvertRstImageOpenCV {
@@ -58,3 +59,4 @@ namespace convert {
   };
 
 } // namespace extract
+} // namespace pontoon

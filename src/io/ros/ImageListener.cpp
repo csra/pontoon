@@ -17,7 +17,7 @@
 
 #include <io/ros/ImageListener.h>
 
-using io::ros::ImageListener;
+using pontoon::io::ros::ImageListener;
 
 ImageListener::ImageListener(const std::string& topic)
 {

@@ -22,6 +22,7 @@
 #include <rst/vision/Image.pb.h>
 #include <image_transport/image_transport.h>
 
+namespace pontoon {
 namespace convert {
 
   class ConvertRstRosImage {
@@ -34,3 +35,4 @@ namespace convert {
   };
 
 } // namespace convert
+} // namespace pontoon

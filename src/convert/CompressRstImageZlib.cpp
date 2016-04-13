@@ -21,7 +21,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread_time.hpp>
 
-using convert::CompressRstImageZlib;
+using pontoon::convert::CompressRstImageZlib;
 
 std::string error_code(int code){
   switch(code){

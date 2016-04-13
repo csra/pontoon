@@ -20,6 +20,7 @@
 #include <exception>
 #include <string>
 
+namespace pontoon {
 namespace utils {
 
 class Exception : public std::exception {
@@ -34,3 +35,4 @@ private:
 };
 
 } // namespace utils
+} // namespace pontoon

@@ -21,6 +21,7 @@
 #include <mutex>
 #include <condition_variable>
 
+namespace pontoon {
 namespace utils {
 
   template<typename Data>
@@ -83,3 +84,4 @@ namespace utils {
   };
 
 } // namespace utils
+} // namespace pontoon

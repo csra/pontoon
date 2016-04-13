@@ -23,8 +23,8 @@
 #include <io/rst/Listener.h>
 #include <convert/ConvertRstImageOpenCV.h>
 
-typedef io::rst::Listener<rstexperimental::vision::EncodedImage> ImageListener;
-typedef io::rst::InformerCVImage ImageInformer;
+typedef pontoon::io::rst::Listener<rstexperimental::vision::EncodedImage> ImageListener;
+typedef pontoon::io::rst::InformerCVImage ImageInformer;
 
 int main(int argc, char **argv){
   boost::program_options::variables_map program_options;
@@ -78,7 +78,7 @@ int main(int argc, char **argv){
   auto in = std::make_shared<ImageListener>(in_scope);
   auto out = std::make_shared<ImageInformer>(out_scope);
 
-  convert::ConvertRstImageOpenCV convert(convert::ConvertRstImageOpenCV::Type::jpg);
+  pontoon::convert::DecodeRstVisionEncodedImage convert;
   auto connection = in->connect([&convert, &out] (ImageListener::DataPtr image) {
                                       out->publish(convert.decode(image));
                                     });

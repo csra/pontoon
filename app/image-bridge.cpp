@@ -75,18 +75,18 @@ int main(int argc, char **argv){
   const std::string input = program_options["input-topic"].as<std::string>();
   const std::string output = program_options["output-url"].as<std::string>();
 
-  auto rosImageSource = std::make_shared<io::ros::ImageListener>(input);
-  auto rsbInformer = std::make_shared<io::rst::Informer<rst::vision::Image>>(output);
-  utils::SynchronizedQueue<convert::ConvertRstRosImage::RosType> queue(15);
+  auto rosImageSource = std::make_shared<pontoon::io::ros::ImageListener>(input);
+  auto rsbInformer = std::make_shared<pontoon::io::rst::Informer<rst::vision::Image>>(output);
+  pontoon::utils::SynchronizedQueue<pontoon::convert::ConvertRstRosImage::RosType> queue(15);
 
   auto connection1 = rosImageSource->connect(
-        [&rosImageSource, &queue] (io::ros::ImageListener::DataType msg) {queue.push(msg);}
+        [&rosImageSource, &queue] (pontoon::io::ros::ImageListener::DataType msg) {queue.push(msg);}
   );
 
   for(;;){
-    convert::ConvertRstRosImage::RosType ros_img;
+    pontoon::convert::ConvertRstRosImage::RosType ros_img;
     queue.pop(ros_img);
-    auto msg = convert::ConvertRstRosImage::convert(ros_img);
+    auto msg = pontoon::convert::ConvertRstRosImage::convert(ros_img);
     rsbInformer->publish(msg);
   }
 }

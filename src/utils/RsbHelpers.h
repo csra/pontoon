@@ -23,6 +23,7 @@
 #include <rsb/ParticipantConfig.h>
 #include <rsb/Factory.h>
 
+namespace pontoon {
 namespace utils {
 namespace rsbhelpers {
 
@@ -75,5 +76,6 @@ typename rsb::Informer<DataType>::Ptr createInformer(const std::string& uri, con
     return rsb::getFactory().createInformer<DataType>(std::get<0>(parsed),std::get<1>(parsed),dataType,parent);
 }
 
-} // namespace utils
 } // namespace rsbhelpers
+} // namespace utils
+} // namespace pontoon

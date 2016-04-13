@@ -26,6 +26,7 @@
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
 
+namespace pontoon {
 namespace io {
 namespace ros {
 
@@ -48,3 +49,4 @@ private:
 
 } // namespace ros
 } // namespace io
+} // namespace pontoon

@@ -23,6 +23,7 @@
 #include <utils/Subject.h>
 #include <rst/vision/Image.pb.h>
 
+namespace pontoon {
 namespace convert {
 
   class CompressRstImageZlib {
@@ -40,3 +41,4 @@ namespace convert {
   };
 
 } // namespace extract
+} // namespace pontoon

@@ -23,10 +23,11 @@
 #include <io/rst/ListenerCVImage.h>
 #include <convert/ConvertRstImageOpenCV.h>
 
-typedef io::rst::ListenerCVImage ImageListener;
-typedef io::rst::Informer<rstexperimental::vision::EncodedImage> ImageInformer;
+typedef pontoon::io::rst::ListenerCVImageRstImage ImageListener;
+typedef pontoon::io::rst::Informer<rstexperimental::vision::EncodedImage> ImageInformer;
 
-
+using pontoon::convert::ImageEncoding;
+using pontoon::convert::EncodeRstVisionImage;
 
 int main(int argc, char **argv){
   boost::program_options::variables_map program_options;
@@ -80,15 +81,15 @@ int main(int argc, char **argv){
   const std::string  in_scope = program_options["input-url" ].as<std::string>();
   const std::string out_scope = program_options["output-url"].as<std::string>();
 
-  const convert::ConvertRstImageOpenCV::Type encoding =  convert::ConvertRstImageOpenCV::stringToType(
+  const ImageEncoding::Type encoding =  ImageEncoding::stringToType(
       program_options["encoding"].as<std::string>());
 
   // init rsb components
   auto in = std::make_shared<ImageListener>(in_scope);
   auto out = std::make_shared<ImageInformer>(out_scope);
 
-  convert::ConvertRstImageOpenCV compress(encoding);
-  auto connection = in->connect([&compress, &out] (ImageListener::DataPtr image) {
+  EncodeRstVisionImage compress(encoding);
+  auto connection = in->connect([&compress, &out] (boost::shared_ptr<IplImage> image) {
                                       out->publish(compress.encode(image));
                                     });
 

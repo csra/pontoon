@@ -26,6 +26,7 @@
 #include <boost/make_shared.hpp>
 #include <opencv2/core/types_c.h>
 
+namespace pontoon {
 namespace io {
 namespace rst {
 
@@ -53,3 +54,4 @@ private:
 
 } // namespace rst
 } // namespace io
+} // namespace pontoon

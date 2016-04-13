@@ -25,6 +25,7 @@
 #include <rsc/runtime/TypeStringTools.h>
 #include <boost/make_shared.hpp>
 
+namespace pontoon {
 namespace io {
 namespace rst {
 
@@ -63,3 +64,4 @@ private:
 
 } // namespace rst
 } // namespace io
+} // namespace pontoon

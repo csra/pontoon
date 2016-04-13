@@ -20,6 +20,7 @@
 #include <functional>
 #include <boost/signals2/signal.hpp>
 
+namespace pontoon {
 namespace utils {
 
 template<typename Data>
@@ -52,3 +53,4 @@ private:
 };
 
 } // namespace utils
+} // namespace pontoon

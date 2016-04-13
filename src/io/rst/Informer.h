@@ -23,6 +23,7 @@
 #include <utils/Subject.h>
 #include <rsc/runtime/TypeStringTools.h>
 
+namespace pontoon {
 namespace io {
 namespace rst {
 
@@ -34,9 +35,9 @@ public:
   typedef RST DataType;
   typedef boost::shared_ptr<RST> DataPtr;
 
-  Informer(const std::string& url){
+  Informer(const std::string& uri){
     utils::rsbhelpers::register_rst<RST>();
-    m_Informer = utils::rsbhelpers::createInformer<RST>(url);
+    m_Informer = utils::rsbhelpers::createInformer<RST>(uri);
   }
 
   virtual ~Informer(){
@@ -71,3 +72,4 @@ private:
 
 } // namespace rst
 } // namespace io
+} // namespace pontoon
