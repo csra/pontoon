@@ -50,6 +50,5 @@ bool ImageIO::writeImage(const std::string& file_name, boost::shared_ptr<IplImag
 }
 
 boost::shared_ptr<IplImage> ImageIO::readImage(const std::string& file_name){
-  std::cerr << "reading file: " << file_name << std::endl;
-  return boost::shared_ptr<IplImage>();
+  return boost::shared_ptr<IplImage>(cvLoadImage(file_name.c_str()));
 }
