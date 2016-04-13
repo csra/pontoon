@@ -29,8 +29,8 @@
 namespace pontoon {
 namespace convert {
 
-  class ConvertRstImageOpenCV {
-  public:
+  struct ImageEncoding {
+
     typedef boost::shared_ptr<IplImage> UncodedPtr;
     typedef boost::shared_ptr<rstexperimental::vision::EncodedImage> CodedPtr;
 
@@ -43,18 +43,27 @@ namespace convert {
       tiff = rstexperimental::vision::EncodedImage_Encoding_TIFF,
     };
 
-    ConvertRstImageOpenCV(const Type& type);
-
-    CodedPtr encode(const UncodedPtr);
-
-    UncodedPtr decode(const CodedPtr);
-
     static std::string typeToString(Type t);
     static Type stringToType(const std::string& type);
 
+  };
+
+  class EncodeRstVisionImage {
+  public:
+
+    EncodeRstVisionImage(const ImageEncoding::Type& type);
+
+    ImageEncoding::CodedPtr encode(const ImageEncoding::UncodedPtr);
+
   private:
-    const Type m_Encoding;
+    const ImageEncoding::Type m_Encoding;
     const std::string m_TypeString;
+  };
+
+  class DecodeRstVisionEncodedImage {
+  public:
+
+    ImageEncoding::UncodedPtr decode(const ImageEncoding::CodedPtr);
 
   };
 
