@@ -20,6 +20,8 @@
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
 #include <rsb/Listener.h>
+#include <rsb/filter/TypeFilter.h>
+#include <rsb/filter/ScopeFilter.h>
 #include <utils/RsbHelpers.h>
 #include <utils/Subject.h>
 #include <rsc/runtime/TypeStringTools.h>
@@ -37,11 +39,17 @@ public:
   typedef RST DataType;
   typedef boost::shared_ptr<RST> DataPtr;
 
-  Listener(const std::string& url)
+  Listener(const std::string& uri, bool filter_subscopes=false)
     : m_Type(rsc::runtime::typeName(typeid(RST)))
   {
     utils::rsbhelpers::register_rst<RST>();
-    m_Listener = utils::rsbhelpers::createListener(url);
+    m_Listener = utils::rsbhelpers::createListener(uri);
+    m_Listener->addFilter(rsb::filter::FilterPtr(rsb::filter::TypeFilter::createForType<RST>()));
+    if(filter_subscopes){
+      m_Listener->addFilter(rsb::filter::FilterPtr(
+                              new rsb::filter::ScopeFilter(rsb::Scope(pontoon::utils::rsbhelpers::parseScope(uri)))
+                            ));
+    }
     m_Handler = boost::make_shared<rsb::EventFunctionHandler>(boost::bind(&Listener<RST>::handle,this,_1));
     m_Listener->addHandler(m_Handler);
   }
@@ -51,9 +59,7 @@ public:
   }
 
   void handle(rsb::EventPtr event){
-    if(event->getType() == m_Type){
-      this->notify(boost::static_pointer_cast<RST>(event->getData()));
-    }
+    this->notify(boost::static_pointer_cast<RST>(event->getData()));
   }
 
 private:
