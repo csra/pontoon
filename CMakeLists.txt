@@ -21,8 +21,8 @@ cmake_minimum_required(VERSION 2.8.2)
 project(pontoon)
 
 # the projects version number
-set(PROJECT_VERSION_MAJOR 0)
-set(PROJECT_VERSION_MINOR 1)
+set(PROJECT_VERSION_MAJOR 1)
+set(PROJECT_VERSION_MINOR 0)
 
 # some output
 message(STATUS "")
