@@ -44,8 +44,12 @@ std::string ImageIO::FileNameGenerator::nextFreeFilename(){
 }
 
 bool ImageIO::writeImage(const std::string& file_name, boost::shared_ptr<IplImage> image){
-  std::cerr << "writing file: " << file_name << std::endl;
-  cvSaveImage(file_name.c_str(),image.get());
+  int written = cvSaveImage(file_name.c_str(),image.get());
+  if(written) {
+    std::cerr << "file written: " << file_name << std::endl;
+  } else {
+    std::cerr << "error writing file: " << file_name << std::endl;
+  }
   return true;
 }
 
