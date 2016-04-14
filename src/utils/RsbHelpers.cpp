@@ -257,9 +257,7 @@ rsb::Scope pontoon::utils::rsbhelpers::parseScope(const std::string& uri){
 
 rsb::ParticipantConfig pontoon::utils::rsbhelpers::parseConfig(const std::string& uri, rsb::ParticipantConfig config){
   rsc::misc::uri parsed(uri);
-  std::cout << "Config: " << config <<  "\n\n" << std::endl;
   if(parsed.scheme() == ""){
-    std::cout << "Not changed\n\n" << std::endl;
     return config;
   } else {
     rsb::ParticipantConfig updated = config;
@@ -274,8 +272,6 @@ rsb::ParticipantConfig pontoon::utils::rsbhelpers::parseConfig(const std::string
     for (auto it = parsed.query.begin(), end = parsed.query.end(); it != end; ++it) {
       options[it->first] = it->second;
     }
-    //transport.setOptions(options);
-    std::cout << "changed: " << updated << "\n\n" << std::endl;
     return updated;
   }
 }
