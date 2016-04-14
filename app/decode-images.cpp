@@ -36,13 +36,13 @@ int main(int argc, char **argv){
   desc.add_options()
       ("help,h","produce help message")
 
-      ("input-url,i",
+      ("input-uri,i",
        boost::program_options::value<std::string>()->default_value("/video/encoded"),
-       "The input rsb url to receive encoded images.")
+       "The input rsb uri to receive encoded images.")
 
-      ("output-url,o",
+      ("output-uri,o",
        boost::program_options::value<std::string>()->default_value("/video/raw"),
-       "The output rsb url to publish raw images.")
+       "The output rsb uri to publish raw images.")
 
       ;
 
@@ -71,8 +71,8 @@ int main(int argc, char **argv){
     return 1;
   }
 
-  const std::string  in_scope = program_options["input-url" ].as<std::string>();
-  const std::string out_scope = program_options["output-url"].as<std::string>();
+  const std::string  in_scope = program_options["input-uri" ].as<std::string>();
+  const std::string out_scope = program_options["output-uri"].as<std::string>();
 
   // init rsb components
   auto in = std::make_shared<ImageListener>(in_scope);

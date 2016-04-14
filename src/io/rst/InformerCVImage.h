@@ -37,8 +37,8 @@ public:
   typedef IplImage DataType;
   typedef boost::shared_ptr<DataType> DataPtr;
 
-  InformerCVImage(const std::string& url){
-    m_Informer = utils::rsbhelpers::createInformer<DataType>(url);
+  InformerCVImage(const std::string& uri){
+    m_Informer = utils::rsbhelpers::createInformer<DataType>(uri);
   }
 
   virtual ~InformerCVImage(){

@@ -39,13 +39,13 @@ int main(int argc, char **argv){
   desc.add_options()
       ("help,h","produce help message")
 
-      ("input-url,i",
+      ("input-uri,i",
        boost::program_options::value<std::string>()->default_value("/video/raw"),
-       "The input rsb url to receive raw images.")
+       "The input rsb uri to receive raw images.")
 
-      ("output-url,o",
+      ("output-uri,o",
        boost::program_options::value<std::string>()->default_value("/video/encoded"),
-       "The output rsb url to publish encoded images.")
+       "The output rsb uri to publish encoded images.")
 
       ("encoding,e",
        boost::program_options::value<std::string>()->default_value("jpg"),
@@ -78,8 +78,8 @@ int main(int argc, char **argv){
     return 1;
   }
 
-  const std::string  in_scope = program_options["input-url" ].as<std::string>();
-  const std::string out_scope = program_options["output-url"].as<std::string>();
+  const std::string  in_scope = program_options["input-uri" ].as<std::string>();
+  const std::string out_scope = program_options["output-uri"].as<std::string>();
 
   const ImageEncoding::Type encoding =  ImageEncoding::stringToType(
       program_options["encoding"].as<std::string>());

@@ -41,9 +41,9 @@ int main(int argc, char **argv){
        boost::program_options::value<std::string>()->default_value("/topic"),
        "The ros topic to listen to for images.")
 
-      ("output-url,o",
+      ("output-uri,o",
        boost::program_options::value<std::string>()->default_value("/scope"),
-       "The rsb url to publish images to.")
+       "The rsb uri to publish images to.")
 
       ;
 
@@ -73,7 +73,7 @@ int main(int argc, char **argv){
   }
 
   const std::string input = program_options["input-topic"].as<std::string>();
-  const std::string output = program_options["output-url"].as<std::string>();
+  const std::string output = program_options["output-uri"].as<std::string>();
 
   auto rosImageSource = std::make_shared<pontoon::io::ros::ImageListener>(input);
   auto rsbInformer = std::make_shared<pontoon::io::rst::Informer<rst::vision::Image>>(output);

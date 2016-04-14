@@ -34,9 +34,9 @@ int main(int argc, char **argv){
   desc.add_options()
       ("help,h","produce help message")
 
-      ("input-url,i",
+      ("input-uri,i",
        boost::program_options::value<std::string>()->default_value("/video/compressed"),
-       "The input rsb url to receive rst::vision::Image or rstexperimental::vision::EncodedImage.")
+       "The input rsb uri to receive rst::vision::Image or rstexperimental::vision::EncodedImage.")
 
       ("encoding,e",
        boost::program_options::value<std::string>()->default_value("jpg"),
@@ -73,7 +73,7 @@ int main(int argc, char **argv){
     return 1;
   }
 
-  const std::string  in_scope = program_options["input-url" ].as<std::string>();
+  const std::string  in_scope = program_options["input-uri" ].as<std::string>();
   const std::string  encoding = program_options["encoding" ].as<std::string>();
   const std::string  prefix   = program_options["prefix" ].as<std::string>();
 
