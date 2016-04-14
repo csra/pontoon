@@ -49,6 +49,13 @@ bool ImageIO::writeImage(const std::string& file_name, boost::shared_ptr<IplImag
   return true;
 }
 
+class IplImageDeleter {
+public:
+  void operator()(IplImage* img) {
+    cvReleaseImage(&img);
+  }
+};
+
 boost::shared_ptr<IplImage> ImageIO::readImage(const std::string& file_name){
-  return boost::shared_ptr<IplImage>(cvLoadImage(file_name.c_str()));
+  return boost::shared_ptr<IplImage>(cvLoadImage(file_name.c_str()),IplImageDeleter());
 }
