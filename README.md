@@ -10,15 +10,24 @@ Yet another bridge. Republishes Imges from ROS to RSB and en/decodes RSB images.
 
 ## Applications
 
-### pontoon-compress-images
+### pontoon-encode-images
 
 Can be used to listen to raw images on one scope and publish an encoded version of them to another.
 RSB uri syntax is supported.
 
-### pontoon-uncompress-images
+### pontoon-decode-images
 
 Can be used to listen to encoded images on one scope and publish a raw version of them to another.
 RSB uri syntax is supported.
+
+### pontoon-send-image
+
+Can be used to read a single image from a file and publish is as rst::vision::Image or
+rst::vision::EncodedImage.
+
+### pontoon-write-images
+
+Can be used to write rst::vision::Image or rst::vision::EncodedImage and write from RSB into files.
 
 ### pontoon-image-bridge
 
