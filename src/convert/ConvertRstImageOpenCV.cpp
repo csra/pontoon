@@ -52,17 +52,18 @@ ImageEncoding::CodedPtr EncodeRstVisionImage::encode(const boost::shared_ptr<Ipl
   }
 }
 
-class CustomDeleter {
+class CustomMatDeleter {
 private:
   boost::shared_ptr<cv::Mat> mat;
 public:
 
-  CustomDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
+  CustomMatDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
 
   void operator()(IplImage* img) {
     delete img;
   }
 };
+
 
 ImageEncoding::UncodedPtr DecodeRstVisionEncodedImage::decode(const ImageEncoding::CodedPtr image) {
   try {
@@ -75,7 +76,7 @@ ImageEncoding::UncodedPtr DecodeRstVisionEncodedImage::decode(const ImageEncodin
               << std::setprecision(4) << std::fixed
               << mat->total() * 3 / (double) image->data().size() << " ( in "
               << (boost::get_system_time() - time).total_nanoseconds() / 1000000. << "ms)" << std::endl;
-    return ImageEncoding::UncodedPtr(new IplImage(*mat),CustomDeleter(mat));
+    return ImageEncoding::UncodedPtr(new IplImage(*mat),CustomMatDeleter(mat));
   } catch (std::exception& e){
     std::stringstream error;
     error << "Cannot decode image with encoding: " << image->encoding() << "  - " << e.what();
