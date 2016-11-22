@@ -24,7 +24,7 @@
 #include <utils/Subject.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <boost/make_shared.hpp>
-#include <opencv2/core/types_c.h>
+#include <opencv2/core/core_c.h>
 
 namespace pontoon {
 namespace io {

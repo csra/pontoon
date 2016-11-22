@@ -22,6 +22,7 @@
 #include <rst/converters/opencv/IplImageConverter.h>
 
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/types_c.h>
 
 using pontoon::convert::ImageEncoding;
 using pontoon::convert::EncodeRstVisionImage;
@@ -34,7 +35,7 @@ EncodeRstVisionImage::EncodeRstVisionImage(const ImageEncoding::Type& type)
 ImageEncoding::CodedPtr EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
   try {
     auto time = boost::get_system_time();
-    cv::Mat mat(image.get(),false);
+    cv::Mat mat = cv::cvarrToMat(image.get());
     std::vector<unsigned char> result;
     int bmpsize = mat.total() * 3;
     ImageEncoding::CodedPtr resultImg(rstexperimental::vision::EncodedImage::default_instance().New());

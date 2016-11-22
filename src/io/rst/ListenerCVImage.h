@@ -27,7 +27,7 @@
 #include <utils/RsbHelpers.h>
 #include <utils/Subject.h>
 
-#include <opencv2/core/types_c.h>
+#include <opencv2/core/core_c.h>
 
 #include <boost/make_shared.hpp>
 
