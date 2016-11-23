@@ -21,7 +21,7 @@
 #include <vector>
 #include <mutex>
 
-#include <opencv2/core/types_c.h>
+#include <opencv2/core/core_c.h>
 #include <rstexperimental/vision/EncodedImage.pb.h>
 
 #include <utils/Subject.h>
