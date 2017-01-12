@@ -35,9 +35,10 @@ namespace pontoon {
 namespace io {
 namespace rst {
 
-class ListenerCVImageRstImage : public pontoon::utils::Subject<boost::shared_ptr<IplImage>>{
+class ListenerCVImageRstImage
+    : public pontoon::utils::Subject<boost::shared_ptr<IplImage>> {
 public:
-  ListenerCVImageRstImage(const std::string& uri);
+  ListenerCVImageRstImage(const std::string &uri);
 
   ~ListenerCVImageRstImage();
 
@@ -48,10 +49,10 @@ private:
   void handle(rsb::EventPtr data);
 };
 
-class ListenerCVImageRstEncodedImage : public pontoon::utils::Subject<boost::shared_ptr<IplImage>>{
+class ListenerCVImageRstEncodedImage
+    : public pontoon::utils::Subject<boost::shared_ptr<IplImage>> {
 public:
-
-  ListenerCVImageRstEncodedImage(const std::string& uri);
+  ListenerCVImageRstEncodedImage(const std::string &uri);
 
   ~ListenerCVImageRstEncodedImage();
 
@@ -61,13 +62,13 @@ private:
   ListenerType::Connection m_Connection;
 };
 
-class CombinedCVImageListener : public pontoon::utils::CompositeSubject<boost::shared_ptr<IplImage>>{
+class CombinedCVImageListener
+    : public pontoon::utils::CompositeSubject<boost::shared_ptr<IplImage>> {
 public:
-  CombinedCVImageListener(const std::string& uri);
+  CombinedCVImageListener(const std::string &uri);
 
   ~CombinedCVImageListener() = default;
 };
-
 
 } // namespace rst
 } // namespace io

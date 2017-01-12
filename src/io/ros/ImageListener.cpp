@@ -19,17 +19,17 @@
 
 using pontoon::io::ros::ImageListener;
 
-ImageListener::ImageListener(const std::string& topic)
-{
-  ::ros::init(std::map<std::string,std::string>(),"",::ros::init_options::NoSigintHandler);
-  node = std::make_shared< ::ros::NodeHandle>();
-  image_transport = std::make_shared< ::image_transport::ImageTransport>(*node);
-  spinner = std::make_shared< ::ros::AsyncSpinner>(1);
-  auto callback = [this] (const ::sensor_msgs::ImageConstPtr msg) {this->notify(msg);};
-  image_subscriber = image_transport->subscribe(topic, 1,callback);
+ImageListener::ImageListener(const std::string &topic) {
+  ::ros::init(std::map<std::string, std::string>(), "",
+              ::ros::init_options::NoSigintHandler);
+  node = std::make_shared<::ros::NodeHandle>();
+  image_transport = std::make_shared<::image_transport::ImageTransport>(*node);
+  spinner = std::make_shared<::ros::AsyncSpinner>(1);
+  auto callback = [this](const ::sensor_msgs::ImageConstPtr msg) {
+    this->notify(msg);
+  };
+  image_subscriber = image_transport->subscribe(topic, 1, callback);
   spinner->start();
 }
 
-ImageListener::~ImageListener(){
-  spinner->stop();
-}
+ImageListener::~ImageListener() { spinner->stop(); }

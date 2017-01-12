@@ -19,20 +19,22 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <rst/vision/Image.pb.h>
 #include <image_transport/image_transport.h>
+#include <rst/vision/Image.pb.h>
 
 namespace pontoon {
 namespace convert {
 
-  class ConvertRstRosImage {
-  public:
-    typedef sensor_msgs::ImageConstPtr RosType;
-    typedef boost::shared_ptr<rst::vision::Image> RstType;
+class ConvertRstRosImage {
+public:
+  typedef sensor_msgs::ImageConstPtr RosType;
+  typedef boost::shared_ptr<rst::vision::Image> RstType;
 
-    static boost::shared_ptr<rst::vision::Image> convert(const sensor_msgs::ImageConstPtr src);
-    static sensor_msgs::ImageConstPtr convert(boost::shared_ptr<rst::vision::Image> src);
-  };
+  static boost::shared_ptr<rst::vision::Image>
+  convert(const sensor_msgs::ImageConstPtr src);
+  static sensor_msgs::ImageConstPtr
+  convert(boost::shared_ptr<rst::vision::Image> src);
+};
 
 } // namespace convert
 } // namespace pontoon

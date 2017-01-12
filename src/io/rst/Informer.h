@@ -19,52 +19,45 @@
 
 #include <rsb/Factory.h>
 #include <rsb/Informer.h>
+#include <rsc/runtime/TypeStringTools.h>
 #include <utils/RsbHelpers.h>
 #include <utils/Subject.h>
-#include <rsc/runtime/TypeStringTools.h>
 
 namespace pontoon {
 namespace io {
 namespace rst {
 
-template<typename RST>
-class Informer {
+template <typename RST> class Informer {
 public:
-
   typedef std::shared_ptr<Informer<RST>> Ptr;
   typedef RST DataType;
   typedef boost::shared_ptr<RST> DataPtr;
 
-  Informer(const std::string& uri){
+  Informer(const std::string &uri) {
     utils::rsbhelpers::register_rst<RST>();
     m_Informer = utils::rsbhelpers::createInformer<RST>(uri);
   }
 
-  virtual ~Informer(){
-  }
+  virtual ~Informer() {}
 
-  virtual void publish(DataPtr data){
-    m_Informer->publish(data);
-  }
+  virtual void publish(DataPtr data) { m_Informer->publish(data); }
 
 private:
   typename rsb::Informer<RST>::Ptr m_Informer;
 };
 
-template<typename RST>
-class Publisher : private Informer<RST> {
+template <typename RST> class Publisher : private Informer<RST> {
 public:
   typedef std::shared_ptr<Publisher<RST>> Ptr;
 
-  Publisher(const std::string& scope, typename utils::Subject<boost::shared_ptr<RST>>::Ptr subject)
-    : Informer<RST>(scope)
-  {
-    m_Connection = subject->connect([this] (boost::shared_ptr<RST> data) {this->publish(data);});
+  Publisher(const std::string &scope,
+            typename utils::Subject<boost::shared_ptr<RST>>::Ptr subject)
+      : Informer<RST>(scope) {
+    m_Connection = subject->connect(
+        [this](boost::shared_ptr<RST> data) { this->publish(data); });
   }
 
-  ~Publisher(){
-    m_Connection.disconnect();
-  }
+  ~Publisher() { m_Connection.disconnect(); }
 
 private:
   typename utils::Subject<boost::shared_ptr<RST>>::Connection m_Connection;

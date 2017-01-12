@@ -25,10 +25,9 @@ namespace utils {
 
 class Exception : public std::exception {
 public:
-  Exception(const std::string& error) : message(error){}
+  Exception(const std::string &error) : message(error) {}
 
-  virtual const char* what() const noexcept override { return message.c_str(); }
-
+  virtual const char *what() const noexcept override { return message.c_str(); }
 
 private:
   const std::string message;

@@ -24,28 +24,27 @@ namespace pontoon {
 namespace io {
 namespace ros {
 
-template<typename MSGType>
-class Informer {
+template <typename MSGType> class Informer {
 public:
-
   typedef std::shared_ptr<Informer<MSGType>> Ptr;
   typedef MSGType DataType;
 
-  Informer(const std::string& topic, const std::string& name , uint queue = 0){
-    ::ros::init(std::map<std::string,std::string>(), name, ::ros::init_options::NoSigintHandler);
-    node = std::make_shared< ::ros::NodeHandle>();
-    publisher = node->advertise<DataType>(topic,queue);
+  Informer(const std::string &topic, const std::string &name, uint queue = 0) {
+    ::ros::init(std::map<std::string, std::string>(), name,
+                ::ros::init_options::NoSigintHandler);
+    node = std::make_shared<::ros::NodeHandle>();
+    publisher = node->advertise<DataType>(topic, queue);
   }
 
   virtual ~Informer() = default;
 
-  virtual void publish(DataType data){
+  virtual void publish(DataType data) {
     publisher.publish(data);
     ::ros::spinOnce();
   }
 
 private:
-  std::shared_ptr< ::ros::NodeHandle> node;
+  std::shared_ptr<::ros::NodeHandle> node;
   ::ros::Publisher publisher;
 };
 

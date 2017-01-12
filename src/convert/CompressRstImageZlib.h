@@ -18,27 +18,26 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <mutex>
-#include <utils/Subject.h>
 #include <rst/vision/Image.pb.h>
+#include <utils/Subject.h>
+#include <vector>
 
 namespace pontoon {
 namespace convert {
 
-  class CompressRstImageZlib {
-  public:
-    typedef boost::shared_ptr<rst::vision::Image> UncompressedImagePtr;
-    typedef boost::shared_ptr<rst::vision::Image> CompressedImagePtr;
+class CompressRstImageZlib {
+public:
+  typedef boost::shared_ptr<rst::vision::Image> UncompressedImagePtr;
+  typedef boost::shared_ptr<rst::vision::Image> CompressedImagePtr;
 
-    CompressedImagePtr compress(const UncompressedImagePtr);
-    UncompressedImagePtr decompress(const CompressedImagePtr);
+  CompressedImagePtr compress(const UncompressedImagePtr);
+  UncompressedImagePtr decompress(const CompressedImagePtr);
 
-
-  private:
-    ulong m_BufferSize = 0;
-    std::unique_ptr<unsigned char> m_Buffer;
-  };
+private:
+  ulong m_BufferSize = 0;
+  std::unique_ptr<unsigned char> m_Buffer;
+};
 
 } // namespace extract
 } // namespace pontoon

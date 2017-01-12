@@ -18,8 +18,8 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <mutex>
+#include <vector>
 
 #include <opencv2/core/core_c.h>
 #include <rst/vision/EncodedImage.pb.h>
@@ -29,42 +29,38 @@
 namespace pontoon {
 namespace convert {
 
-  struct ImageEncoding {
+struct ImageEncoding {
 
-    typedef boost::shared_ptr<IplImage> UncodedPtr;
-    typedef boost::shared_ptr<rst::vision::EncodedImage> CodedPtr;
+  typedef boost::shared_ptr<IplImage> UncodedPtr;
+  typedef boost::shared_ptr<rst::vision::EncodedImage> CodedPtr;
 
-    enum Type {
-      ppm = rst::vision::EncodedImage_Encoding_PPM,
-      png = rst::vision::EncodedImage_Encoding_PNG,
-      jpg = rst::vision::EncodedImage_Encoding_JPG,
-      jp2 = rst::vision::EncodedImage_Encoding_JP2,
-      tiff = rst::vision::EncodedImage_Encoding_TIFF,
-    };
-
-    static std::string typeToString(Type t);
-    static Type stringToType(const std::string& type);
-
+  enum Type {
+    ppm = rst::vision::EncodedImage_Encoding_PPM,
+    png = rst::vision::EncodedImage_Encoding_PNG,
+    jpg = rst::vision::EncodedImage_Encoding_JPG,
+    jp2 = rst::vision::EncodedImage_Encoding_JP2,
+    tiff = rst::vision::EncodedImage_Encoding_TIFF,
   };
 
-  class EncodeRstVisionImage {
-  public:
+  static std::string typeToString(Type t);
+  static Type stringToType(const std::string &type);
+};
 
-    EncodeRstVisionImage(const ImageEncoding::Type& type);
+class EncodeRstVisionImage {
+public:
+  EncodeRstVisionImage(const ImageEncoding::Type &type);
 
-    ImageEncoding::CodedPtr encode(const ImageEncoding::UncodedPtr);
+  ImageEncoding::CodedPtr encode(const ImageEncoding::UncodedPtr);
 
-  private:
-    const ImageEncoding::Type m_Encoding;
-    const std::string m_TypeString;
-  };
+private:
+  const ImageEncoding::Type m_Encoding;
+  const std::string m_TypeString;
+};
 
-  class DecodeRstVisionEncodedImage {
-  public:
-
-    ImageEncoding::UncodedPtr decode(const ImageEncoding::CodedPtr);
-
-  };
+class DecodeRstVisionEncodedImage {
+public:
+  ImageEncoding::UncodedPtr decode(const ImageEncoding::CodedPtr);
+};
 
 } // namespace extract
 } // namespace pontoon

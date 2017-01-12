@@ -17,71 +17,71 @@
 
 #pragma once
 
-#include <queue>
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
+#include <queue>
 
 namespace pontoon {
 namespace utils {
 
-  template<typename Data>
-  class SynchronizedQueue {
-  public:
+template <typename Data> class SynchronizedQueue {
+public:
+  typedef std::mutex Mutex;
+  typedef std::unique_lock<Mutex> Lock;
+  typedef std::condition_variable ConditionVariable;
 
-    typedef std::mutex Mutex;
-    typedef std::unique_lock<Mutex> Lock;
-    typedef std::condition_variable ConditionVariable;
+  SynchronizedQueue(size_t maximum_size = -1) : max_size(maximum_size) {}
 
-    SynchronizedQueue(size_t maximum_size=-1) : max_size(maximum_size){}
+  ~SynchronizedQueue() {
+    Lock lock(mutex);
+    exit = true;
+    condition.notify_all();
+  }
 
-    ~SynchronizedQueue(){
-      Lock lock(mutex);
-      exit = true;
-      condition.notify_all();
-    }
-
-    void push(Data const& data) {
-      Lock lock(mutex);
-      if(max_size > 0 && queue.size() > max_size) {
-        queue.pop();
-      }
-      queue.push(data);
-      lock.unlock();
-      condition.notify_one();
-    }
-
-    bool empty() const {
-      Lock lock(mutex);
-      return queue.empty();
-    }
-
-    bool try_pop(Data& popped_value) {
-      Lock lock(mutex);
-      if(queue.empty()) {
-        return false;
-      }
-      popped_value=queue.front();
-      queue.pop();
-      return true;
-    }
-
-    void pop(Data& data) {
-      Lock lock(mutex);
-      while(queue.empty()) {
-        if(exit) { return; }
-        condition.wait(lock);
-      }
-      data = queue.front();
+  void push(Data const &data) {
+    Lock lock(mutex);
+    if (max_size > 0 && queue.size() > max_size) {
       queue.pop();
     }
+    queue.push(data);
+    lock.unlock();
+    condition.notify_one();
+  }
 
-  private:
-    std::queue<Data> queue;
-    mutable Mutex mutex;
-    ConditionVariable condition;
-    size_t max_size;
-    bool exit = false;
-  };
+  bool empty() const {
+    Lock lock(mutex);
+    return queue.empty();
+  }
+
+  bool try_pop(Data &popped_value) {
+    Lock lock(mutex);
+    if (queue.empty()) {
+      return false;
+    }
+    popped_value = queue.front();
+    queue.pop();
+    return true;
+  }
+
+  void pop(Data &data) {
+    Lock lock(mutex);
+    while (queue.empty()) {
+      if (exit) {
+        return;
+      }
+      condition.wait(lock);
+    }
+    data = queue.front();
+    queue.pop();
+  }
+
+private:
+  std::queue<Data> queue;
+  mutable Mutex mutex;
+  ConditionVariable condition;
+  size_t max_size;
+  bool exit = false;
+};
 
 } // namespace utils
 } // namespace pontoon

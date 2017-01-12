@@ -19,41 +19,48 @@
 
 #include <boost/program_options.hpp>
 
-#include <io/rst/ListenerCVImage.h>
 #include <io/ImageIO.h>
+#include <io/rst/ListenerCVImage.h>
 
 typedef pontoon::io::rst::CombinedCVImageListener ImageListener;
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   boost::program_options::variables_map program_options;
 
-  std::string description = "This application listens for images and saves them into files.";
+  std::string description =
+      "This application listens for images and saves them into files.";
   std::stringstream description_text;
-  description_text << description << "\n\n" << "Allowed options";
+  description_text << description << "\n\n"
+                   << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()
-      ("help,h","produce help message")
+  desc.add_options()("help,h", "produce help message")
 
       ("input-uri,i",
-       boost::program_options::value<std::string>()->default_value("/video/compressed"),
-       "The input rsb uri to receive rst::vision::Image or rstexperimental::vision::EncodedImage.")
+       boost::program_options::value<std::string>()->default_value(
+           "/video/compressed"),
+       "The input rsb uri to receive rst::vision::Image or "
+       "rstexperimental::vision::EncodedImage.")
 
-      ("encoding,e",
-       boost::program_options::value<std::string>()->default_value("jpg"),
-       "The output encoding to use. Can be on of ( bmp | ppm | png | jpg | jp2 | tiff ).")
+          ("encoding,e",
+           boost::program_options::value<std::string>()->default_value("jpg"),
+           "The output encoding to use. Can be on of ( bmp | ppm | png | jpg | "
+           "jp2 | tiff ).")
 
-      ("prefix,p",
-       boost::program_options::value<std::string>()->default_value("./img_"),
-       "The output file prefix")
+              ("prefix,p",
+               boost::program_options::value<std::string>()->default_value(
+                   "./img_"),
+               "The output file prefix")
 
       ;
 
   try {
-    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), program_options);
+    boost::program_options::store(
+        boost::program_options::parse_command_line(argc, argv, desc),
+        program_options);
     boost::program_options::notify(program_options);
 
     std::stringstream arguments;
-    for(int i = 0; i < argc; ++i){
+    for (int i = 0; i < argc; ++i) {
       arguments << argv[i] << " ";
     }
     std::cerr << "Program started with line: " << arguments.str() << std::endl;
@@ -63,9 +70,9 @@ int main(int argc, char **argv){
       return 1;
     }
 
-  } catch (boost::program_options::error& e) {
+  } catch (boost::program_options::error &e) {
     std::stringstream arguments;
-    for(int i = 0; i < argc; ++i){
+    for (int i = 0; i < argc; ++i) {
       arguments << argv[i] << " ";
     }
     std::cerr << "Could not parse program options: " << e.what();
@@ -73,25 +80,23 @@ int main(int argc, char **argv){
     return 1;
   }
 
-  const std::string  in_scope = program_options["input-uri" ].as<std::string>();
-  const std::string  encoding = program_options["encoding" ].as<std::string>();
-  const std::string  prefix   = program_options["prefix" ].as<std::string>();
+  const std::string in_scope = program_options["input-uri"].as<std::string>();
+  const std::string encoding = program_options["encoding"].as<std::string>();
+  const std::string prefix = program_options["prefix"].as<std::string>();
 
   // init components
   std::mutex mutex;
 
-
   auto in = std::make_shared<ImageListener>(in_scope);
-  pontoon::io::ImageIO::FileNameGenerator fg(prefix,std::string(".") + encoding);
+  pontoon::io::ImageIO::FileNameGenerator fg(prefix,
+                                             std::string(".") + encoding);
 
-
-  auto connection = in->connect(
-        [&mutex, &in, &fg] (ImageListener::DataType image)
-  {
-    std::cout << "Image received" << std::endl;
-    std::lock_guard<std::mutex> l(mutex);
-    pontoon::io::ImageIO::writeImage(fg.nextFreeFilename(),image);
-  });
+  auto connection =
+      in->connect([&mutex, &in, &fg](ImageListener::DataType image) {
+        std::cout << "Image received" << std::endl;
+        std::lock_guard<std::mutex> l(mutex);
+        pontoon::io::ImageIO::writeImage(fg.nextFreeFilename(), image);
+      });
 
   std::cerr << "Ready..." << std::endl;
 

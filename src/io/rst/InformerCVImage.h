@@ -17,14 +17,14 @@
 
 #pragma once
 
+#include <boost/make_shared.hpp>
+#include <opencv2/core/core_c.h>
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
 #include <rsb/Listener.h>
+#include <rsc/runtime/TypeStringTools.h>
 #include <utils/RsbHelpers.h>
 #include <utils/Subject.h>
-#include <rsc/runtime/TypeStringTools.h>
-#include <boost/make_shared.hpp>
-#include <opencv2/core/core_c.h>
 
 namespace pontoon {
 namespace io {
@@ -32,21 +32,17 @@ namespace rst {
 
 class InformerCVImage {
 public:
-
   typedef std::shared_ptr<InformerCVImage> Ptr;
   typedef IplImage DataType;
   typedef boost::shared_ptr<DataType> DataPtr;
 
-  InformerCVImage(const std::string& uri){
+  InformerCVImage(const std::string &uri) {
     m_Informer = utils::rsbhelpers::createInformer<DataType>(uri);
   }
 
-  virtual ~InformerCVImage(){
-  }
+  virtual ~InformerCVImage() {}
 
-  virtual void publish(DataPtr data){
-    m_Informer->publish(data);
-  }
+  virtual void publish(DataPtr data) { m_Informer->publish(data); }
 
 private:
   typename rsb::Informer<DataType>::Ptr m_Informer;

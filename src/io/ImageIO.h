@@ -18,8 +18,8 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <mutex>
+#include <vector>
 
 #include <opencv2/core/core_c.h>
 
@@ -28,26 +28,27 @@
 namespace pontoon {
 namespace io {
 
-  class ImageIO {
+class ImageIO {
+public:
+  class FileNameGenerator {
   public:
+    FileNameGenerator(const std::string &prefix, const std::string &suffix,
+                      int start = 0, int padding = 6);
 
-    class FileNameGenerator {
-    public:
-      FileNameGenerator(const std::string& prefix, const std::string& suffix, int start = 0, int padding = 6);
+    std::string nextFilename();
+    std::string nextFreeFilename();
 
-      std::string nextFilename();
-      std::string nextFreeFilename();
-    private:
-      std::string m_Prefix;
-      std::string m_Suffix;
-      int m_Padding;
-      int m_Current;
-    };
-
-    static bool writeImage(const std::string& file_name, boost::shared_ptr<IplImage> image);
-    static boost::shared_ptr<IplImage> readImage(const std::string& file_name);
-
+  private:
+    std::string m_Prefix;
+    std::string m_Suffix;
+    int m_Padding;
+    int m_Current;
   };
+
+  static bool writeImage(const std::string &file_name,
+                         boost::shared_ptr<IplImage> image);
+  static boost::shared_ptr<IplImage> readImage(const std::string &file_name);
+};
 
 } // namespace io
 } // namespace pontoon

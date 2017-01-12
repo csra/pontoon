@@ -19,8 +19,8 @@
 #include <utils/Exception.h>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread/thread_time.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/thread/thread_time.hpp>
 
 #include <iomanip>
 
@@ -28,17 +28,20 @@
 
 using pontoon::io::ImageIO;
 
-ImageIO::FileNameGenerator::FileNameGenerator(
-    const std::string& prefix, const std::string& suffix, int start, int padding)
-  : m_Prefix(prefix), m_Suffix(suffix), m_Padding(padding),  m_Current(start) {}
+ImageIO::FileNameGenerator::FileNameGenerator(const std::string &prefix,
+                                              const std::string &suffix,
+                                              int start, int padding)
+    : m_Prefix(prefix), m_Suffix(suffix), m_Padding(padding), m_Current(start) {
+}
 
 std::string ImageIO::FileNameGenerator::nextFilename() {
   std::stringstream s;
-  s << m_Prefix << std::setfill('0') << std::setw(m_Padding) << m_Current++ << m_Suffix;
+  s << m_Prefix << std::setfill('0') << std::setw(m_Padding) << m_Current++
+    << m_Suffix;
   return s.str();
 }
 
-std::string ImageIO::FileNameGenerator::nextFreeFilename(){
+std::string ImageIO::FileNameGenerator::nextFreeFilename() {
   std::string name;
   do {
     name = nextFilename();
@@ -46,9 +49,10 @@ std::string ImageIO::FileNameGenerator::nextFreeFilename(){
   return name;
 }
 
-bool ImageIO::writeImage(const std::string& file_name, boost::shared_ptr<IplImage> image){
-  int written = cvSaveImage(file_name.c_str(),image.get());
-  if(written) {
+bool ImageIO::writeImage(const std::string &file_name,
+                         boost::shared_ptr<IplImage> image) {
+  int written = cvSaveImage(file_name.c_str(), image.get());
+  if (written) {
     std::cerr << "file written: " << file_name << std::endl;
   } else {
     std::cerr << "error writing file: " << file_name << std::endl;
@@ -58,11 +62,10 @@ bool ImageIO::writeImage(const std::string& file_name, boost::shared_ptr<IplImag
 
 class IplImageDeleter {
 public:
-  void operator()(IplImage* img) {
-    cvReleaseImage(&img);
-  }
+  void operator()(IplImage *img) { cvReleaseImage(&img); }
 };
 
-boost::shared_ptr<IplImage> ImageIO::readImage(const std::string& file_name){
-  return boost::shared_ptr<IplImage>(cvLoadImage(file_name.c_str()),IplImageDeleter());
+boost::shared_ptr<IplImage> ImageIO::readImage(const std::string &file_name) {
+  return boost::shared_ptr<IplImage>(cvLoadImage(file_name.c_str()),
+                                     IplImageDeleter());
 }

@@ -17,33 +17,32 @@
 
 #pragma once
 
-#include <deque>
 #include <atomic>
+#include <deque>
 #include <memory>
 
 #include <utils/Subject.h>
 
-#include <ros/ros.h>
 #include <image_transport/image_transport.h>
+#include <ros/ros.h>
 
 namespace pontoon {
 namespace io {
 namespace ros {
 
-class ImageListener : public utils::Subject<sensor_msgs::ImageConstPtr>{
+class ImageListener : public utils::Subject<sensor_msgs::ImageConstPtr> {
 public:
-
   typedef std::shared_ptr<ImageListener> Ptr;
   typedef Subject::DataType DataType;
 
-  ImageListener(const std::string& topic);
+  ImageListener(const std::string &topic);
 
   virtual ~ImageListener();
 
 private:
-  std::shared_ptr< ::ros::NodeHandle> node;
-  std::shared_ptr< ::image_transport::ImageTransport> image_transport;
-  std::shared_ptr< ::ros::AsyncSpinner> spinner;
+  std::shared_ptr<::ros::NodeHandle> node;
+  std::shared_ptr<::image_transport::ImageTransport> image_transport;
+  std::shared_ptr<::ros::AsyncSpinner> spinner;
   ::image_transport::Subscriber image_subscriber;
 };
 

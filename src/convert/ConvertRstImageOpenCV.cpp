@@ -15,40 +15,45 @@
 **                                                                 **
 ********************************************************************/
 
-#include <convert/ConvertRstImageOpenCV.h>
-#include <utils/Exception.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread_time.hpp>
+#include <convert/ConvertRstImageOpenCV.h>
 #include <rst/converters/opencv/IplImageConverter.h>
+#include <utils/Exception.h>
 
-#include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/types_c.h>
+#include <opencv2/highgui/highgui.hpp>
 
 using pontoon::convert::ImageEncoding;
 using pontoon::convert::EncodeRstVisionImage;
 using pontoon::convert::DecodeRstVisionEncodedImage;
 
-EncodeRstVisionImage::EncodeRstVisionImage(const ImageEncoding::Type& type)
-  : m_Encoding(type), m_TypeString(std::string(".") + ImageEncoding::typeToString(type))
-{}
+EncodeRstVisionImage::EncodeRstVisionImage(const ImageEncoding::Type &type)
+    : m_Encoding(type),
+      m_TypeString(std::string(".") + ImageEncoding::typeToString(type)) {}
 
-ImageEncoding::CodedPtr EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
+ImageEncoding::CodedPtr
+EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
   try {
     auto time = boost::get_system_time();
     cv::Mat mat = cv::cvarrToMat(image.get());
     std::vector<unsigned char> result;
     int bmpsize = mat.total() * 3;
-    ImageEncoding::CodedPtr resultImg(rst::vision::EncodedImage::default_instance().New());
-    resultImg->set_encoding((rst::vision::EncodedImage_Encoding) m_Encoding);
-    cv::imencode(m_TypeString,mat,result);
-    resultImg->set_data(result.data(),result.size());
+    ImageEncoding::CodedPtr resultImg(
+        rst::vision::EncodedImage::default_instance().New());
+    resultImg->set_encoding((rst::vision::EncodedImage_Encoding)m_Encoding);
+    cv::imencode(m_TypeString, mat, result);
+    resultImg->set_data(result.data(), result.size());
     std::cerr << m_TypeString << " c.f.: " << std::setprecision(4) << std::fixed
-              << result.size() / (double) bmpsize << " ( in "
-              << (boost::get_system_time() - time).total_nanoseconds() / 1000000. << "ms)" << std::endl;
+              << result.size() / (double)bmpsize << " ( in "
+              << (boost::get_system_time() - time).total_nanoseconds() /
+                     1000000.
+              << "ms)" << std::endl;
     return resultImg;
-  } catch (std::exception& e){
+  } catch (std::exception &e) {
     std::stringstream error;
-    error << "Cannot convert: " << image.get() << " to " << m_TypeString << " - " << e.what();
+    error << "Cannot convert: " << image.get() << " to " << m_TypeString
+          << " - " << e.what();
     throw utils::Exception(error.str());
   }
 }
@@ -56,59 +61,68 @@ ImageEncoding::CodedPtr EncodeRstVisionImage::encode(const boost::shared_ptr<Ipl
 class CustomMatDeleter {
 private:
   boost::shared_ptr<cv::Mat> mat;
-public:
 
+public:
   CustomMatDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
 
-  void operator()(IplImage* img) {
-    delete img;
-  }
+  void operator()(IplImage *img) { delete img; }
 };
 
-
-ImageEncoding::UncodedPtr DecodeRstVisionEncodedImage::decode(const ImageEncoding::CodedPtr image) {
+ImageEncoding::UncodedPtr
+DecodeRstVisionEncodedImage::decode(const ImageEncoding::CodedPtr image) {
   try {
     auto time = boost::get_system_time();
-    std::vector<unsigned char> tmp; tmp.resize(image->data().size());
+    std::vector<unsigned char> tmp;
+    tmp.resize(image->data().size());
     std::copy(image->data().begin(), image->data().end(), tmp.begin());
     boost::shared_ptr<cv::Mat> mat(new cv::Mat());
-    cv::imdecode(tmp,cv::IMREAD_UNCHANGED,mat.get());
-    std::cerr << ImageEncoding::typeToString((ImageEncoding::Type) image->encoding()) << " i.f.: "
-              << std::setprecision(4) << std::fixed
-              << mat->total() * 3 / (double) image->data().size() << " ( in "
-              << (boost::get_system_time() - time).total_nanoseconds() / 1000000. << "ms)" << std::endl;
-    return ImageEncoding::UncodedPtr(new IplImage(*mat),CustomMatDeleter(mat));
-  } catch (std::exception& e){
+    cv::imdecode(tmp, cv::IMREAD_UNCHANGED, mat.get());
+    std::cerr << ImageEncoding::typeToString(
+                     (ImageEncoding::Type)image->encoding())
+              << " i.f.: " << std::setprecision(4) << std::fixed
+              << mat->total() * 3 / (double)image->data().size() << " ( in "
+              << (boost::get_system_time() - time).total_nanoseconds() /
+                     1000000.
+              << "ms)" << std::endl;
+    return ImageEncoding::UncodedPtr(new IplImage(*mat), CustomMatDeleter(mat));
+  } catch (std::exception &e) {
     std::stringstream error;
-    error << "Cannot decode image with encoding: " << image->encoding() << "  - " << e.what();
+    error << "Cannot decode image with encoding: " << image->encoding()
+          << "  - " << e.what();
     throw utils::Exception(error.str());
   }
 }
 
-std::string ImageEncoding::typeToString(ImageEncoding::Type t){
-  switch(t){
-    case Type::ppm:
-      return "ppm";
-    case Type::png:
-      return "png";
-    case Type::jpg:
-      return "jpg";
-    case Type::jp2:
-      return "jp2";
-    case Type::tiff:
-      return "tiff";
-    default:
-      std::stringstream error;
-      error << "Unknown ConvertRstImageOpenCV::Type (" << t << ").";
-      throw utils::Exception(error.str());
+std::string ImageEncoding::typeToString(ImageEncoding::Type t) {
+  switch (t) {
+  case Type::ppm:
+    return "ppm";
+  case Type::png:
+    return "png";
+  case Type::jpg:
+    return "jpg";
+  case Type::jp2:
+    return "jp2";
+  case Type::tiff:
+    return "tiff";
+  default:
+    std::stringstream error;
+    error << "Unknown ConvertRstImageOpenCV::Type (" << t << ").";
+    throw utils::Exception(error.str());
   }
 }
 
-ImageEncoding::Type ImageEncoding::stringToType(const std::string& type){
-  if(type == "ppm" ) return Type::ppm;
-  if(type == "png" ) return Type::png;
-  if(type == "jpg" ) return Type::jpg;
-  if(type == "jp2" ) return Type::jp2;
-  if(type == "tiff") return Type::tiff;
-  throw utils::Exception(std::string("Unknown ConvertRstImageOpenCV::Type: ") + type);
+ImageEncoding::Type ImageEncoding::stringToType(const std::string &type) {
+  if (type == "ppm")
+    return Type::ppm;
+  if (type == "png")
+    return Type::png;
+  if (type == "jpg")
+    return Type::jpg;
+  if (type == "jp2")
+    return Type::jp2;
+  if (type == "tiff")
+    return Type::tiff;
+  throw utils::Exception(std::string("Unknown ConvertRstImageOpenCV::Type: ") +
+                         type);
 }

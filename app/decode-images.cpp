@@ -19,39 +19,44 @@
 
 #include <boost/program_options.hpp>
 
+#include <convert/ConvertRstImageOpenCV.h>
 #include <io/rst/InformerCVImage.h>
 #include <io/rst/Listener.h>
-#include <convert/ConvertRstImageOpenCV.h>
 
 typedef pontoon::io::rst::Listener<rst::vision::EncodedImage> ImageListener;
 typedef pontoon::io::rst::InformerCVImage ImageInformer;
 
-int main(int argc, char **argv){
+int main(int argc, char **argv) {
   boost::program_options::variables_map program_options;
 
-  std::string description = "This application listens for published encoded images and publishes raw versions.";
+  std::string description = "This application listens for published encoded "
+                            "images and publishes raw versions.";
   std::stringstream description_text;
-  description_text << description << "\n\n" << "Allowed options";
+  description_text << description << "\n\n"
+                   << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()
-      ("help,h","produce help message")
+  desc.add_options()("help,h", "produce help message")
 
       ("input-uri,i",
-       boost::program_options::value<std::string>()->default_value("/video/encoded"),
+       boost::program_options::value<std::string>()->default_value(
+           "/video/encoded"),
        "The input rsb uri to receive encoded images.")
 
-      ("output-uri,o",
-       boost::program_options::value<std::string>()->default_value("/video/raw"),
-       "The output rsb uri to publish raw images.")
+          ("output-uri,o",
+           boost::program_options::value<std::string>()->default_value(
+               "/video/raw"),
+           "The output rsb uri to publish raw images.")
 
       ;
 
   try {
-    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), program_options);
+    boost::program_options::store(
+        boost::program_options::parse_command_line(argc, argv, desc),
+        program_options);
     boost::program_options::notify(program_options);
 
     std::stringstream arguments;
-    for(int i = 0; i < argc; ++i){
+    for (int i = 0; i < argc; ++i) {
       arguments << argv[i] << " ";
     }
     std::cerr << "Program started with line: " << arguments.str() << std::endl;
@@ -61,9 +66,9 @@ int main(int argc, char **argv){
       return 1;
     }
 
-  } catch (boost::program_options::error& e) {
+  } catch (boost::program_options::error &e) {
     std::stringstream arguments;
-    for(int i = 0; i < argc; ++i){
+    for (int i = 0; i < argc; ++i) {
       arguments << argv[i] << " ";
     }
     std::cerr << "Could not parse program options: " << e.what();
@@ -71,7 +76,7 @@ int main(int argc, char **argv){
     return 1;
   }
 
-  const std::string  in_scope = program_options["input-uri" ].as<std::string>();
+  const std::string in_scope = program_options["input-uri"].as<std::string>();
   const std::string out_scope = program_options["output-uri"].as<std::string>();
 
   // init rsb components
@@ -79,9 +84,9 @@ int main(int argc, char **argv){
   auto out = std::make_shared<ImageInformer>(out_scope);
 
   pontoon::convert::DecodeRstVisionEncodedImage convert;
-  auto connection = in->connect([&convert, &out] (ImageListener::DataPtr image) {
-                                      out->publish(convert.decode(image));
-                                    });
+  auto connection = in->connect([&convert, &out](ImageListener::DataPtr image) {
+    out->publish(convert.decode(image));
+  });
 
   std::cerr << "Ready..." << std::endl;
 
