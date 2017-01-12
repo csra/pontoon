@@ -24,7 +24,7 @@
 #include <convert/ConvertRstImageOpenCV.h>
 
 typedef pontoon::io::rst::ListenerCVImageRstImage ImageListener;
-typedef pontoon::io::rst::Informer<rstexperimental::vision::EncodedImage> ImageInformer;
+typedef pontoon::io::rst::Informer<rst::vision::EncodedImage> ImageInformer;
 
 using pontoon::convert::ImageEncoding;
 using pontoon::convert::EncodeRstVisionImage;

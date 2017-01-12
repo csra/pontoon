@@ -87,7 +87,7 @@ int main(int argc, char **argv){
     informer.publish(image);
   } else {
     pontoon::convert::EncodeRstVisionImage encoder(pontoon::convert::ImageEncoding::stringToType(type));
-    pontoon::io::rst::Informer<rstexperimental::vision::EncodedImage> informer(out_uri);
+    pontoon::io::rst::Informer<rst::vision::EncodedImage> informer(out_uri);
     informer.publish(encoder.encode(image));
   }
 

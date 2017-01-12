@@ -38,8 +38,8 @@ ImageEncoding::CodedPtr EncodeRstVisionImage::encode(const boost::shared_ptr<Ipl
     cv::Mat mat = cv::cvarrToMat(image.get());
     std::vector<unsigned char> result;
     int bmpsize = mat.total() * 3;
-    ImageEncoding::CodedPtr resultImg(rstexperimental::vision::EncodedImage::default_instance().New());
-    resultImg->set_encoding((rstexperimental::vision::EncodedImage_Encoding) m_Encoding);
+    ImageEncoding::CodedPtr resultImg(rst::vision::EncodedImage::default_instance().New());
+    resultImg->set_encoding((rst::vision::EncodedImage_Encoding) m_Encoding);
     cv::imencode(m_TypeString,mat,result);
     resultImg->set_data(result.data(),result.size());
     std::cerr << m_TypeString << " c.f.: " << std::setprecision(4) << std::fixed
@@ -87,8 +87,6 @@ ImageEncoding::UncodedPtr DecodeRstVisionEncodedImage::decode(const ImageEncodin
 
 std::string ImageEncoding::typeToString(ImageEncoding::Type t){
   switch(t){
-    case Type::bmp:
-      return "bmp";
     case Type::ppm:
       return "ppm";
     case Type::png:
@@ -107,7 +105,6 @@ std::string ImageEncoding::typeToString(ImageEncoding::Type t){
 }
 
 ImageEncoding::Type ImageEncoding::stringToType(const std::string& type){
-  if(type == "bmp" ) return Type::bmp;
   if(type == "ppm" ) return Type::ppm;
   if(type == "png" ) return Type::png;
   if(type == "jpg" ) return Type::jpg;

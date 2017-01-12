@@ -22,7 +22,7 @@
 #include <mutex>
 
 #include <opencv2/core/core_c.h>
-#include <rstexperimental/vision/EncodedImage.pb.h>
+#include <rst/vision/EncodedImage.pb.h>
 
 #include <utils/Subject.h>
 
@@ -32,15 +32,14 @@ namespace convert {
   struct ImageEncoding {
 
     typedef boost::shared_ptr<IplImage> UncodedPtr;
-    typedef boost::shared_ptr<rstexperimental::vision::EncodedImage> CodedPtr;
+    typedef boost::shared_ptr<rst::vision::EncodedImage> CodedPtr;
 
     enum Type {
-      bmp = rstexperimental::vision::EncodedImage_Encoding_BMP,
-      ppm = rstexperimental::vision::EncodedImage_Encoding_PPM,
-      png = rstexperimental::vision::EncodedImage_Encoding_PNG,
-      jpg = rstexperimental::vision::EncodedImage_Encoding_JPG,
-      jp2 = rstexperimental::vision::EncodedImage_Encoding_JP2,
-      tiff = rstexperimental::vision::EncodedImage_Encoding_TIFF,
+      ppm = rst::vision::EncodedImage_Encoding_PPM,
+      png = rst::vision::EncodedImage_Encoding_PNG,
+      jpg = rst::vision::EncodedImage_Encoding_JPG,
+      jp2 = rst::vision::EncodedImage_Encoding_JP2,
+      tiff = rst::vision::EncodedImage_Encoding_TIFF,
     };
 
     static std::string typeToString(Type t);

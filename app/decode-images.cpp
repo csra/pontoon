@@ -23,7 +23,7 @@
 #include <io/rst/Listener.h>
 #include <convert/ConvertRstImageOpenCV.h>
 
-typedef pontoon::io::rst::Listener<rstexperimental::vision::EncodedImage> ImageListener;
+typedef pontoon::io::rst::Listener<rst::vision::EncodedImage> ImageListener;
 typedef pontoon::io::rst::InformerCVImage ImageInformer;
 
 int main(int argc, char **argv){

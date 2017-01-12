@@ -18,7 +18,7 @@
 #include <io/rst/ListenerCVImage.h>
 #include <rsb/filter/TypeFilter.h>
 #include <rst/vision/Image.pb.h>
-#include <rstexperimental/vision/EncodedImage.pb.h>
+#include <rst/vision/EncodedImage.pb.h>
 #include <convert/ConvertRstImageOpenCV.h>
 
 using pontoon::io::rst::ListenerCVImageRstImage;

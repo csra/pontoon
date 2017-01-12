@@ -21,7 +21,7 @@
 #include <rsb/Handler.h>
 #include <rsb/Listener.h>
 #include <rsc/runtime/TypeStringTools.h>
-#include <rstexperimental/vision/EncodedImage.pb.h>
+#include <rst/vision/EncodedImage.pb.h>
 
 #include <io/rst/Listener.h>
 #include <utils/RsbHelpers.h>
@@ -56,7 +56,7 @@ public:
   ~ListenerCVImageRstEncodedImage();
 
 private:
-  typedef pontoon::io::rst::Listener<rstexperimental::vision::EncodedImage> ListenerType;
+  typedef pontoon::io::rst::Listener<::rst::vision::EncodedImage> ListenerType;
   ListenerType m_Listener;
   ListenerType::Connection m_Connection;
 };
