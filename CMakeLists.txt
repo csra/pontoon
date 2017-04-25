@@ -52,6 +52,23 @@ IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "Release")
 ENDIF()
 
+# Offer the user the choice of overriding the installation directories
+set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
+set(INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
+set(INSTALL_CMAKE_DIR "share/${PROJECT_NAME}/" CACHE PATH "Installation directory for CMake files")
+set(INSTALL_DOCUMENTATION_DIR "share/${PROJECT_NAME}/doc" CACHE PATH "Installation directory for CMake files")
+
+# Make relative paths absolute (needed later on)
+set(INSTALL_CMAKE_DIR_REL "${INSTALL_CMAKE_DIR}")
+foreach(p LIB BIN INCLUDE CMAKE)
+  set(var INSTALL_${p}_DIR)
+  if(NOT IS_ABSOLUTE "${${var}}")
+    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+  endif()
+endforeach()
+
+
 # rsb
 find_package(RSB REQUIRED)
 find_package(RCT REQUIRED)
@@ -120,9 +137,6 @@ find_package(Boost 1.54 COMPONENTS date_time REQUIRED)
 # zlib
 find_package(ZLIB REQUIRED)
 
-# opencv
-
-
 message(STATUS "Looking for doxygen")
 find_program(DOXYGEN_BIN NAMES doxygen)
 if(NOT "${DOXYGEN_BIN}" STREQUAL "DOXYGEN_BIN-NOTFOUND")
@@ -132,10 +146,10 @@ if(NOT "${DOXYGEN_BIN}" STREQUAL "DOXYGEN_BIN-NOTFOUND")
     COMMENT "Creating html and tex documentation in doc/"
   )
   install(
-    DIRECTORY ${PROJECT_BINARY_DIR}/doc/html 
+    DIRECTORY ${PROJECT_BINARY_DIR}/doc/html
     DESTINATION "share/doc/${PROJECT_NAME}/"
     DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE WORLD_READ WORLD_EXECUTE OWNER_EXECUTE GROUP_EXECUTE
-    FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE 
+    FILE_PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE
  )
 else()
   message(STATUS "  doxygen not found, documentation will not be available")
@@ -176,6 +190,7 @@ target_link_libraries(${PROJECT_NAME}
   ${ZLIB_LIBRARIES}
 )
 install(TARGETS "${PROJECT_NAME}"
+        EXPORT  ${PROJECT_NAME}Targets
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib/static
@@ -207,3 +222,31 @@ foreach(APP ${APPS})
          )
 endforeach(APP)
 
+
+##### setup cmake config #####
+# Project name in caps
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+# Add all targets to the build-tree export set
+export(TARGETS ${PROJECT_NAME} ${APPLICATIONS}
+  FILE "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake")
+
+# Create the Config.cmake and ConfigVersion files
+file(RELATIVE_PATH REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}"
+   "${INSTALL_INCLUDE_DIR}")
+# ... for the install tree
+set(CONF_INCLUDE_DIRS "\${FFORMATION_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+configure_file(cmake/Config.cmake.in
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}Config.cmake" @ONLY)
+# ... for both
+configure_file(cmake/ConfigVersion.cmake.in
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake" @ONLY)
+
+# Install the Config.cmake and ConfigVersion.cmake
+install(FILES
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${PROJECT_NAME}Config.cmake"
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
+
+# Install the export set for use with the install-tree
+install(EXPORT ${PROJECT_NAME}Targets DESTINATION
+  "${INSTALL_CMAKE_DIR_REL}" COMPONENT dev)
