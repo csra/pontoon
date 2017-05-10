@@ -84,8 +84,8 @@ int main(int argc, char **argv) {
   auto out = std::make_shared<ImageInformer>(out_scope);
 
   pontoon::convert::DecodeRstVisionEncodedImage convert;
-  auto connection = in->connect([&convert, &out](ImageListener::DataPtr image) {
-    out->publish(convert.decode(image));
+  auto connection = in->connect([&convert, &out](ImageListener::DataType image) {
+    out->publish(convert.decode(image.data()));
   });
 
   std::cerr << "Ready..." << std::endl;

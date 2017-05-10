@@ -32,11 +32,25 @@ namespace io {
 namespace rst {
 
 template <typename RST>
-class Listener : public utils::Subject<boost::shared_ptr<RST>> {
+class EventData {
+public:
+  typedef RST DataType;
+  typedef boost::shared_ptr<DataType> DataPtr;
+  typedef boost::shared_ptr<rsb::Event> EventPtr;
+
+  EventData(EventPtr event) : _event(event) {}
+
+  DataPtr data() const { return boost::static_pointer_cast<RST>(_event->getData()); }
+  EventPtr event() const { return _event; }
+
+private:
+  EventPtr _event;
+};
+
+template <typename RST>
+class Listener : public utils::Subject<EventData<RST>> {
 public:
   typedef std::shared_ptr<Listener<RST>> Ptr;
-  typedef RST DataType;
-  typedef boost::shared_ptr<RST> DataPtr;
 
   Listener(const std::string &uri, bool filter_subscopes = false)
       : m_Type(rsc::runtime::typeName(typeid(RST))) {
@@ -56,7 +70,7 @@ public:
   virtual ~Listener() { m_Listener->removeHandler(m_Handler); }
 
   void handle(rsb::EventPtr event) {
-    this->notify(boost::static_pointer_cast<RST>(event->getData()));
+    this->notify(EventData<RST>(event));
   }
 
 private:

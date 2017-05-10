@@ -24,6 +24,7 @@
 using pontoon::io::rst::ListenerCVImageRstImage;
 using pontoon::io::rst::ListenerCVImageRstEncodedImage;
 using pontoon::io::rst::CombinedCVImageListener;
+using pontoon::io::rst::EventData;
 using rsb::filter::FilterPtr;
 using rsb::filter::TypeFilter;
 
@@ -40,15 +41,17 @@ ListenerCVImageRstImage::~ListenerCVImageRstImage() {
 }
 
 void ListenerCVImageRstImage::handle(rsb::EventPtr data) {
-  this->notify(boost::static_pointer_cast<IplImage>(data->getData()));
+  this->notify(EventData<IplImage>(data));
 }
 
 ListenerCVImageRstEncodedImage::ListenerCVImageRstEncodedImage(
     const std::string &uri)
     : m_Listener(uri, false) {
-  m_Connection = m_Listener.connect([this](ListenerType::DataPtr data) {
-    convert::DecodeRstVisionEncodedImage decoder;
-    notify(decoder.decode(data));
+  m_Connection = m_Listener.connect([this](EventData<::rst::vision::EncodedImage> data) {
+      rsb::EventPtr event(new rsb::Event(*data.event()));
+      convert::DecodeRstVisionEncodedImage decoder;
+      event->setData(decoder.decode(data.data()));
+      notify(EventData<IplImage>(event));
   });
 }
 
@@ -57,6 +60,6 @@ ListenerCVImageRstEncodedImage::~ListenerCVImageRstEncodedImage() {
 }
 
 CombinedCVImageListener::CombinedCVImageListener(const std::string &uri)
-    : pontoon::utils::CompositeSubject<boost::shared_ptr<IplImage>>(
+    : pontoon::utils::CompositeSubject<EventData<IplImage>>(
           {Ptr(new ListenerCVImageRstEncodedImage(uri)),
            Ptr(new ListenerCVImageRstImage(uri))}) {}

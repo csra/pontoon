@@ -74,7 +74,6 @@ boost::shared_ptr<rst::vision::Image>
 ConvertRstRosImage::convert(const sensor_msgs::ImageConstPtr src) {
   typedef rst::vision::Image RstImage;
   typedef boost::shared_ptr<RstImage> RstImagePtr;
-  typedef sensor_msgs::ImageConstPtr RosImagePtr;
 
   RstImagePtr image = RstImagePtr(new RstImage());
 

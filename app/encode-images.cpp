@@ -97,8 +97,8 @@ int main(int argc, char **argv) {
 
   EncodeRstVisionImage compress(encoding);
   auto connection =
-      in->connect([&compress, &out](boost::shared_ptr<IplImage> image) {
-        out->publish(compress.encode(image));
+      in->connect([&compress, &out](ImageListener::DataType image) {
+        out->publish(compress.encode(image.data()));
       });
 
   std::cerr << "Ready..." << std::endl;

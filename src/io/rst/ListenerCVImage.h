@@ -36,7 +36,7 @@ namespace io {
 namespace rst {
 
 class ListenerCVImageRstImage
-    : public pontoon::utils::Subject<boost::shared_ptr<IplImage>> {
+    : public pontoon::utils::Subject<EventData<IplImage>> {
 public:
   ListenerCVImageRstImage(const std::string &uri);
 
@@ -50,7 +50,7 @@ private:
 };
 
 class ListenerCVImageRstEncodedImage
-    : public pontoon::utils::Subject<boost::shared_ptr<IplImage>> {
+    : public pontoon::utils::Subject<EventData<IplImage>> {
 public:
   ListenerCVImageRstEncodedImage(const std::string &uri);
 
@@ -63,7 +63,7 @@ private:
 };
 
 class CombinedCVImageListener
-    : public pontoon::utils::CompositeSubject<boost::shared_ptr<IplImage>> {
+    : public pontoon::utils::CompositeSubject<EventData<IplImage>> {
 public:
   CombinedCVImageListener(const std::string &uri);
 
