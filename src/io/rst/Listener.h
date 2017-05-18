@@ -18,6 +18,7 @@
 #pragma once
 
 #include <boost/make_shared.hpp>
+#include <rsb/Event.h>
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
 #include <rsb/Listener.h>
@@ -31,24 +32,45 @@ namespace pontoon {
 namespace io {
 namespace rst {
 
-template <typename RST>
-class EventData {
+class EventDataBase {
 public:
-  typedef RST DataType;
-  typedef boost::shared_ptr<DataType> DataPtr;
   typedef boost::shared_ptr<rsb::Event> EventPtr;
 
-  EventData(EventPtr event) : _event(event) {}
+  EventDataBase() {}
+  EventDataBase(EventPtr event) : _event(event) {}
+  virtual ~EventDataBase() = default;
 
-  DataPtr data() const { return boost::static_pointer_cast<RST>(_event->getData()); }
-  EventPtr event() const { return _event; }
+  virtual EventPtr event() const final { return _event; }
+  virtual bool valid() const { return _event.get() != nullptr; }
+
+  template<typename RST>
+  boost::shared_ptr<RST> data() const {
+    return boost::static_pointer_cast<RST>(event()->getData());
+  }
 
 private:
   EventPtr _event;
 };
 
-template <typename RST>
-class Listener : public utils::Subject<EventData<RST>> {
+template <typename RST> class EventData : public EventDataBase {
+public:
+  typedef RST DataType;
+  typedef boost::shared_ptr<DataType> DataPtr;
+
+  EventData() : EventDataBase() {}
+  EventData(EventPtr event) : EventDataBase(event) {}
+
+  DataPtr data() const {
+    return EventDataBase::data<RST>();
+  }
+
+  bool valid() const {
+    return EventDataBase::valid() &&
+           event()->getType() == rsc::runtime::typeName<RST>();
+  }
+};
+
+template <typename RST> class Listener : public utils::Subject<EventData<RST>> {
 public:
   typedef std::shared_ptr<Listener<RST>> Ptr;
 
@@ -69,9 +91,8 @@ public:
 
   virtual ~Listener() { m_Listener->removeHandler(m_Handler); }
 
-  void handle(rsb::EventPtr event) {
-    this->notify(EventData<RST>(event));
-  }
+  void handle(rsb::EventPtr event) { this->notify(EventData<RST>(event)); }
+
 
 private:
   const std::string m_Type;
