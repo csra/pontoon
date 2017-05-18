@@ -93,6 +93,7 @@ public:
 
   void handle(rsb::EventPtr event) { this->notify(EventData<RST>(event)); }
 
+  const std::string &type() const { return m_Type; }
 
 private:
   const std::string m_Type;
