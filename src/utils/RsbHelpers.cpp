@@ -59,7 +59,7 @@ namespace misc {
     https://github.com/cpp-netlib/uri
 */
 
-class uri_builder;
+struct uri_builder;
 class uri {
 public:
   /// empty constructor
