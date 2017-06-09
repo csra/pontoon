@@ -20,6 +20,7 @@
 #include <convert/ConvertRstImageOpenCV.h>
 #include <rst/converters/opencv/IplImageConverter.h>
 #include <utils/Exception.h>
+#include <utils/CvHelpers.h>
 
 #include <opencv2/core/types_c.h>
 #include <opencv2/highgui/highgui.hpp>
@@ -58,16 +59,6 @@ EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
   }
 }
 
-class CustomMatDeleter {
-private:
-  boost::shared_ptr<cv::Mat> mat;
-
-public:
-  CustomMatDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
-
-  void operator()(IplImage *img) { delete img; }
-};
-
 ImageEncoding::UncodedPtr
 DecodeRstVisionEncodedImage::decode(const ImageEncoding::CodedPtr image) {
   try {
@@ -84,7 +75,7 @@ DecodeRstVisionEncodedImage::decode(const ImageEncoding::CodedPtr image) {
               << (boost::get_system_time() - time).total_nanoseconds() /
                      1000000.
               << "ms)" << std::endl;
-    return ImageEncoding::UncodedPtr(new IplImage(*mat), CustomMatDeleter(mat));
+    return utils::cvhelpers::asIplImagePtr(mat);
   } catch (std::exception &e) {
     std::stringstream error;
     error << "Cannot decode image with encoding: " << image->encoding()
