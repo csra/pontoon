@@ -15,15 +15,13 @@
 **                                                                 **
 ********************************************************************/
 
-#include <mutex>
-
+#include "convert/ConvertRstImageOpenCV.h"
+#include "io/ImageIO.h"
+#include "io/rst/Informer.h"
+#include "io/rst/InformerCVImage.h"
 #include <boost/program_options.hpp>
 #include <iostream>
-
-#include <convert/ConvertRstImageOpenCV.h>
-#include <io/ImageIO.h>
-#include <io/rst/Informer.h>
-#include <io/rst/InformerCVImage.h>
+#include <mutex>
 
 int main(int argc, char **argv) {
   boost::program_options::variables_map program_options;
@@ -90,11 +88,11 @@ int main(int argc, char **argv) {
   auto image = pontoon::io::ImageIO::readImage(file);
   if (type == "img") {
     pontoon::io::rst::InformerCVImage informer(out_uri);
-    informer.publish(image,pontoon::io::Causes());
+    informer.publish(image, pontoon::io::Causes());
   } else {
     pontoon::convert::EncodeRstVisionImage encoder(
         pontoon::convert::ImageEncoding::stringToType(type));
     pontoon::io::rst::Informer<rst::vision::EncodedImage> informer(out_uri);
-    informer.publish(encoder.encode(image),pontoon::io::Causes());
+    informer.publish(encoder.encode(image), pontoon::io::Causes());
   }
 }

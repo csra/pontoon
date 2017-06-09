@@ -17,19 +17,16 @@
 
 #pragma once
 
+#include "io/rst/Listener.h"
+#include "utils/RsbHelpers.h"
+#include "utils/Subject.h"
+#include <boost/make_shared.hpp>
+#include <opencv2/core/core_c.h>
 #include <rsb/Factory.h>
 #include <rsb/Handler.h>
 #include <rsb/Listener.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <rst/vision/EncodedImage.pb.h>
-
-#include <io/rst/Listener.h>
-#include <utils/RsbHelpers.h>
-#include <utils/Subject.h>
-
-#include <opencv2/core/core_c.h>
-
-#include <boost/make_shared.hpp>
 
 namespace pontoon {
 namespace io {

@@ -41,7 +41,7 @@ public:
 
   virtual ~Informer() {}
 
-  virtual void publish(DataPtr data, const pontoon::io::Causes& causes) {
+  virtual void publish(DataPtr data, const pontoon::io::Causes &causes) {
     auto event = m_Informer->createEvent();
     for (auto cause : causes) {
       event->addCause(cause);

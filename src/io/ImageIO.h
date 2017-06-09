@@ -17,13 +17,11 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include <memory>
 #include <mutex>
-#include <vector>
-
 #include <opencv2/core/core_c.h>
-
-#include <boost/shared_ptr.hpp>
+#include <vector>
 
 namespace pontoon {
 namespace io {

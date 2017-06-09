@@ -17,13 +17,11 @@
 
 #pragma once
 
+#include "utils/Subject.h"
 #include <atomic>
 #include <deque>
-#include <memory>
-
-#include <utils/Subject.h>
-
 #include <image_transport/image_transport.h>
+#include <memory>
 #include <ros/ros.h>
 
 namespace pontoon {

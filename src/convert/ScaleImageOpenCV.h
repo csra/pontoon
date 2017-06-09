@@ -17,15 +17,14 @@
 
 #pragma once
 
+#include "utils/Subject.h"
 #include <opencv2/core/core_c.h>
-#include <utils/Subject.h>
 
 namespace pontoon {
 namespace convert {
 
 class ScaleImageOpenCV {
 public:
-
   using ImgType = boost::shared_ptr<IplImage>;
 
   ScaleImageOpenCV(double scale_width, double scale_height);

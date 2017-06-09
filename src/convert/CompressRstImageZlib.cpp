@@ -15,10 +15,10 @@
 **                                                                 **
 ********************************************************************/
 
+#include "convert/CompressRstImageZlib.h"
+#include "utils/Exception.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread_time.hpp>
-#include <convert/CompressRstImageZlib.h>
-#include <utils/Exception.h>
 #include <zlib.h>
 
 using pontoon::convert::CompressRstImageZlib;

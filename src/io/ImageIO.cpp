@@ -15,15 +15,12 @@
 **                                                                 **
 ********************************************************************/
 
-#include <io/ImageIO.h>
-#include <utils/Exception.h>
-
+#include "io/ImageIO.h"
+#include "utils/Exception.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/thread/thread_time.hpp>
-
 #include <iomanip>
-
 #include <opencv2/highgui/highgui.hpp>
 
 using pontoon::io::ImageIO;

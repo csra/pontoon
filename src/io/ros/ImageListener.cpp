@@ -15,7 +15,7 @@
 **                                                                 **
 ********************************************************************/
 
-#include <io/ros/ImageListener.h>
+#include "io/ros/ImageListener.h"
 
 using pontoon::io::ros::ImageListener;
 

@@ -15,24 +15,22 @@
 **                                                                 **
 ********************************************************************/
 
-#include <mutex>
-
-#include <boost/program_options.hpp>
-
 #include "convert/ConvertRstImageOpenCV.h"
 #include "convert/ScaleImageOpenCV.h"
 #include "io/rst/Informer.h"
 #include "io/rst/InformerCVImage.h"
 #include "io/rst/ListenerCVImage.h"
+#include <boost/program_options.hpp>
+#include <mutex>
 
 typedef pontoon::io::rst::ListenerCVImageRstImage ImageListener;
 typedef pontoon::io::rst::InformerCVImage ImageInformer;
-typedef pontoon::io::rst::Informer<rst::vision::EncodedImage> EncodedImageInformer;
+typedef pontoon::io::rst::Informer<rst::vision::EncodedImage>
+    EncodedImageInformer;
 
 using pontoon::convert::ImageEncoding;
 using pontoon::convert::ScaleImageOpenCV;
 using pontoon::convert::EncodeRstVisionImage;
-
 
 void block() {
   std::cerr << "Ready..." << std::endl;
@@ -124,7 +122,7 @@ int main(int argc, char **argv) {
     auto out = std::make_shared<ImageInformer>(out_scope);
     auto connection =
         in->connect([&scale, &out](ImageListener::DataType image) {
-          out->publish(scale.scale(image.data()),image.causes());
+          out->publish(scale.scale(image.data()), image.causes());
         });
     block();
 
@@ -135,11 +133,10 @@ int main(int argc, char **argv) {
     auto out = std::make_shared<EncodedImageInformer>(out_scope);
 
     EncodeRstVisionImage compress(encoder);
-    auto connection =
-        in->connect([&scale, &compress, &out](ImageListener::DataType image) {
-          out->publish(compress.encode(scale.scale(image.data())),image.causes());
-        });
+    auto connection = in->connect([&scale, &compress,
+                                   &out](ImageListener::DataType image) {
+      out->publish(compress.encode(scale.scale(image.data())), image.causes());
+    });
     block();
   }
-
 }

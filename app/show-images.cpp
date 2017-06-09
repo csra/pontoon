@@ -77,13 +77,14 @@ int main(int argc, char **argv) {
   ImageQueue queue(10);
 
   size_t frame = 0;
-  auto connection = in->connect([&frame, &in, &queue](ImageListener::DataType image) {
-    std::cerr << "received image #" << ++frame << std::endl;
-    queue.push(image);
-  });
+  auto connection =
+      in->connect([&frame, &in, &queue](ImageListener::DataType image) {
+        std::cerr << "received image #" << ++frame << std::endl;
+        queue.push(image);
+      });
 
   std::string window_name("pontoon-show-images");
-  cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE );
+  cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
   int key = -1;
   cv::Mat image;
   while (key != 27) {
@@ -91,10 +92,9 @@ int main(int argc, char **argv) {
     queue.pop(img);
     if (img.valid()) {
       image = cv::cvarrToMat(img.data().get());
-      cv::imshow(window_name,image);
+      cv::imshow(window_name, image);
     }
     key = cv::waitKey(10);
   }
   std::cout << "ESCAPE received. Leaving application." << std::endl;
-
 }

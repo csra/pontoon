@@ -15,12 +15,10 @@
 **                                                                 **
 ********************************************************************/
 
-#include <mutex>
-
+#include "io/ImageIO.h"
+#include "io/rst/ListenerCVImage.h"
 #include <boost/program_options.hpp>
-
-#include <io/ImageIO.h>
-#include <io/rst/ListenerCVImage.h>
+#include <mutex>
 
 typedef pontoon::io::rst::CombinedCVImageListener ImageListener;
 

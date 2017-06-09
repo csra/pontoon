@@ -15,17 +15,15 @@
 **                                                                 **
 ********************************************************************/
 
+#include "convert/ConvertRstRosImage.h"
+#include "io/ros/ImageListener.h"
+#include "io/rst/Informer.h"
+#include "utils/SynchronizedQueue.h"
+#include <boost/make_shared.hpp>
+#include <boost/program_options.hpp>
 #include <iostream>
 #include <memory>
 #include <mutex>
-
-#include <boost/make_shared.hpp>
-#include <boost/program_options.hpp>
-
-#include <convert/ConvertRstRosImage.h>
-#include <io/ros/ImageListener.h>
-#include <io/rst/Informer.h>
-#include <utils/SynchronizedQueue.h>
 
 int main(int argc, char **argv) {
   boost::program_options::variables_map program_options;
@@ -94,6 +92,6 @@ int main(int argc, char **argv) {
     pontoon::convert::ConvertRstRosImage::RosType ros_img;
     queue.pop(ros_img);
     auto msg = pontoon::convert::ConvertRstRosImage::convert(ros_img);
-    rsbInformer->publish(msg,pontoon::io::Causes());
+    rsbInformer->publish(msg, pontoon::io::Causes());
   }
 }

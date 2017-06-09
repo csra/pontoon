@@ -18,7 +18,6 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
-
 #include <image_transport/image_transport.h>
 #include <rst/vision/Image.pb.h>
 

@@ -15,13 +15,11 @@
 **                                                                 **
 ********************************************************************/
 
-#include <mutex>
-
+#include "convert/ConvertRstImageOpenCV.h"
+#include "io/rst/InformerCVImage.h"
+#include "io/rst/Listener.h"
 #include <boost/program_options.hpp>
-
-#include <convert/ConvertRstImageOpenCV.h>
-#include <io/rst/InformerCVImage.h>
-#include <io/rst/Listener.h>
+#include <mutex>
 
 typedef pontoon::io::rst::Listener<rst::vision::EncodedImage> ImageListener;
 typedef pontoon::io::rst::InformerCVImage ImageInformer;
@@ -85,7 +83,7 @@ int main(int argc, char **argv) {
   pontoon::convert::DecodeRstVisionEncodedImage convert;
   auto connection =
       in->connect([&convert, &out](ImageListener::DataType image) {
-        out->publish(convert.decode(image.data()),image.causes());
+        out->publish(convert.decode(image.data()), image.causes());
       });
 
   std::cerr << "Ready..." << std::endl;

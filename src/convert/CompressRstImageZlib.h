@@ -17,10 +17,10 @@
 
 #pragma once
 
+#include "utils/Subject.h"
 #include <memory>
 #include <mutex>
 #include <rst/vision/Image.pb.h>
-#include <utils/Subject.h>
 #include <vector>
 
 namespace pontoon {

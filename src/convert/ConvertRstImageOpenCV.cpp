@@ -15,15 +15,14 @@
 **                                                                 **
 ********************************************************************/
 
+#include "convert/ConvertRstImageOpenCV.h"
+#include "utils/CvHelpers.h"
+#include "utils/Exception.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread_time.hpp>
-#include <convert/ConvertRstImageOpenCV.h>
-#include <rst/converters/opencv/IplImageConverter.h>
-#include <utils/Exception.h>
-#include <utils/CvHelpers.h>
-
 #include <opencv2/core/types_c.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <rst/converters/opencv/IplImageConverter.h>
 
 using pontoon::convert::ImageEncoding;
 using pontoon::convert::EncodeRstVisionImage;

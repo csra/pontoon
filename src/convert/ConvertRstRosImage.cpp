@@ -15,11 +15,9 @@
 **                                                                 **
 ********************************************************************/
 
+#include "utils/Exception.h"
 #include <convert/ConvertRstRosImage.h>
-
 #include <sensor_msgs/image_encodings.h>
-
-#include <utils/Exception.h>
 
 using pontoon::utils::Exception;
 using pontoon::convert::ConvertRstRosImage;

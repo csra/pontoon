@@ -17,14 +17,12 @@
 
 #pragma once
 
+#include "utils/Subject.h"
 #include <memory>
 #include <mutex>
-#include <vector>
-
 #include <opencv2/core/core_c.h>
 #include <rst/vision/EncodedImage.pb.h>
-
-#include <utils/Subject.h>
+#include <vector>
 
 namespace pontoon {
 namespace convert {

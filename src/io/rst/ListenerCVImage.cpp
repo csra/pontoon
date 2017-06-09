@@ -15,8 +15,8 @@
 **                                                                 **
 ********************************************************************/
 
-#include <convert/ConvertRstImageOpenCV.h>
-#include <io/rst/ListenerCVImage.h>
+#include "io/rst/ListenerCVImage.h"
+#include "convert/ConvertRstImageOpenCV.h"
 #include <rsb/filter/TypeFilter.h>
 #include <rst/vision/EncodedImage.pb.h>
 #include <rst/vision/Image.pb.h>
@@ -49,13 +49,14 @@ void ListenerCVImageRstImage::handle(rsb::EventPtr data) {
 ListenerCVImageRstEncodedImage::ListenerCVImageRstEncodedImage(
     const std::string &uri)
     : m_Listener(uri, false) {
-  m_Connection = m_Listener.connect([this](EventData<::rst::vision::EncodedImage> data) {
-      rsb::EventPtr event(new rsb::Event(*data.event()));
-      convert::DecodeRstVisionEncodedImage decoder;
-      event->setData(decoder.decode(data.data()));
-      event->setType(IMAGE_TYPE_STRING);
-      notify(EventData<IplImage>(event));
-  });
+  m_Connection =
+      m_Listener.connect([this](EventData<::rst::vision::EncodedImage> data) {
+        rsb::EventPtr event(new rsb::Event(*data.event()));
+        convert::DecodeRstVisionEncodedImage decoder;
+        event->setData(decoder.decode(data.data()));
+        event->setType(IMAGE_TYPE_STRING);
+        notify(EventData<IplImage>(event));
+      });
 }
 
 ListenerCVImageRstEncodedImage::~ListenerCVImageRstEncodedImage() {
