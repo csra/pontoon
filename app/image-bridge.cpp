@@ -35,18 +35,19 @@ int main(int argc, char **argv) {
   description_text << description << "\n\n"
                    << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()("help,h", "produce help message")
+  desc.add_options()("help,h", "produce help message");
 
-      ("input-topic,i",
-       boost::program_options::value<std::string>()->default_value("/topic"),
-       "The ros topic to listen to for images.")
+  desc.add_options()(
+      "input-topic,i",
+      boost::program_options::value<std::string>()->default_value("/topic"),
+      "The ros topic to listen to for images.");
 
-          ("output-uri,o",
-           boost::program_options::value<std::string>()->default_value(
-               "/scope"),
-           "The rsb uri to publish images to.")
+  desc.add_options()(
+      "output-uri,o",
+      boost::program_options::value<std::string>()->default_value("/scope"),
+      "The rsb uri to publish images to.");
 
-      ;
+  ;
 
   try {
     boost::program_options::store(

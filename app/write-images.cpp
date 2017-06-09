@@ -33,25 +33,25 @@ int main(int argc, char **argv) {
   description_text << description << "\n\n"
                    << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()("help,h", "produce help message")
+  desc.add_options()("help,h", "produce help message");
 
-      ("input-uri,i",
-       boost::program_options::value<std::string>()->default_value(
-           "/video/compressed"),
-       "The input rsb uri to receive rst::vision::Image or "
-       "rstexperimental::vision::EncodedImage.")
+  desc.add_options()("input-uri,i", boost::program_options::value<std::string>()
+                                        ->default_value("/video/compressed"),
+                     "The input rsb uri to receive rst::vision::Image or "
+                     "rstexperimental::vision::EncodedImage.");
 
-          ("encoding,e",
-           boost::program_options::value<std::string>()->default_value("jpg"),
-           "The output encoding to use. Can be on of ( bmp | ppm | png | jpg | "
-           "jp2 | tiff ).")
+  desc.add_options()(
+      "encoding,e",
+      boost::program_options::value<std::string>()->default_value("jpg"),
+      "The output encoding to use. Can be on of ( bmp | ppm | png | jpg | "
+      "jp2 | tiff ).");
 
-              ("prefix,p",
-               boost::program_options::value<std::string>()->default_value(
-                   "./img_"),
-               "The output file prefix")
+  desc.add_options()(
+      "prefix,p",
+      boost::program_options::value<std::string>()->default_value("./img_"),
+      "The output file prefix");
 
-      ;
+  ;
 
   try {
     boost::program_options::store(

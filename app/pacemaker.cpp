@@ -52,21 +52,23 @@ int main(int argc, char **argv) {
   description_text << description << "\n\n"
                    << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()("help,h", "produce help message")
+  desc.add_options()("help,h", "produce help message");
 
-      ("delta,d", boost::program_options::value<uint>()->default_value(100),
-       "The time between two messages in milliseconds.")
+  desc.add_options()("delta,d",
+                     boost::program_options::value<uint>()->default_value(100),
+                     "The time between two messages in milliseconds.");
 
-          ("uri,u", boost::program_options::value<std::string>()->default_value(
-                        "/pacemaker"),
-           "The output rsb uri to send the notifications to.")
+  desc.add_options()(
+      "uri,u",
+      boost::program_options::value<std::string>()->default_value("/pacemaker"),
+      "The output rsb uri to send the notifications to.");
 
-              ("topic,t",
-               boost::program_options::value<std::string>()->default_value(
-                   "/pacemaker"),
-               "The output ros topic to send the notifications to.")
+  desc.add_options()(
+      "topic,t",
+      boost::program_options::value<std::string>()->default_value("/pacemaker"),
+      "The output ros topic to send the notifications to.");
 
-      ;
+  ;
 
   try {
     boost::program_options::store(

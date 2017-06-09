@@ -35,19 +35,18 @@ int main(int argc, char **argv) {
   description_text << description << "\n\n"
                    << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()("help,h", "produce help message")
+  desc.add_options()("help,h", "produce help message");
 
-      ("input-uri,i",
-       boost::program_options::value<std::string>()->default_value(
-           "/video/encoded"),
-       "The input rsb uri to receive encoded images.")
+  desc.add_options()("input-uri,i", boost::program_options::value<std::string>()
+                                        ->default_value("/video/encoded"),
+                     "The input rsb uri to receive encoded images.");
 
-          ("output-uri,o",
-           boost::program_options::value<std::string>()->default_value(
-               "/video/raw"),
-           "The output rsb uri to publish raw images.")
+  desc.add_options()(
+      "output-uri,o",
+      boost::program_options::value<std::string>()->default_value("/video/raw"),
+      "The output rsb uri to publish raw images.");
 
-      ;
+  ;
 
   try {
     boost::program_options::store(

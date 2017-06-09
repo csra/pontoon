@@ -34,26 +34,26 @@ int main(int argc, char **argv) {
   description_text << description << "\n\n"
                    << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()("help,h", "produce help message")
+  desc.add_options()("help,h", "produce help message");
 
-      ("file,f", boost::program_options::value<std::string>(),
-       "The file to send.")
+  desc.add_options()("file,f", boost::program_options::value<std::string>(),
+                     "The file to send.");
 
-          ("output-uri,o",
-           boost::program_options::value<std::string>()->default_value(
-               "/image"),
-           "The output rsb uri to send the image to.")
+  desc.add_options()(
+      "output-uri,o",
+      boost::program_options::value<std::string>()->default_value("/image"),
+      "The output rsb uri to send the image to.");
 
-              ("type,t",
-               boost::program_options::value<std::string>()->default_value(
-                   "jpg"),
-               "The output type to use. Can be on of ( img | bmp | ppm | png | "
-               "jpg | jp2 | tiff ). "
-               "The send image data is rst::vision::Image in case of 'img' and "
-               "rst::vision::EncodedImage "
-               "in all other cases.")
+  desc.add_options()(
+      "type,t",
+      boost::program_options::value<std::string>()->default_value("jpg"),
+      "The output type to use. Can be on of ( img | bmp | ppm | png | "
+      "jpg | jp2 | tiff ). "
+      "The send image data is rst::vision::Image in case of 'img' and "
+      "rst::vision::EncodedImage "
+      "in all other cases.");
 
-      ;
+  ;
 
   try {
     boost::program_options::store(
