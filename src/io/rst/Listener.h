@@ -17,6 +17,9 @@
 
 #pragma once
 
+#include "io/Cause.h"
+#include "utils/RsbHelpers.h"
+#include "utils/Subject.h"
 #include <boost/make_shared.hpp>
 #include <rsb/Event.h>
 #include <rsb/Factory.h>
@@ -25,8 +28,6 @@
 #include <rsb/filter/ScopeFilter.h>
 #include <rsb/filter/TypeFilter.h>
 #include <rsc/runtime/TypeStringTools.h>
-#include <utils/RsbHelpers.h>
-#include <utils/Subject.h>
 
 namespace pontoon {
 namespace io {
@@ -34,7 +35,8 @@ namespace rst {
 
 class EventDataBase {
 public:
-  typedef boost::shared_ptr<rsb::Event> EventPtr;
+  using EventPtr = boost::shared_ptr<rsb::Event>;
+  using Cause = ::pontoon::io::Causes;
 
   EventDataBase() {}
   EventDataBase(EventPtr event) : _event(event) {}
@@ -42,9 +44,9 @@ public:
 
   virtual EventPtr event() const final { return _event; }
   virtual bool valid() const { return _event.get() != nullptr; }
+  virtual Causes causes() const { return _event->getCauses(); }
 
-  template<typename RST>
-  boost::shared_ptr<RST> data() const {
+  template <typename RST> boost::shared_ptr<RST> data() const {
     return boost::static_pointer_cast<RST>(event()->getData());
   }
 
@@ -60,9 +62,7 @@ public:
   EventData() : EventDataBase() {}
   EventData(EventPtr event) : EventDataBase(event) {}
 
-  DataPtr data() const {
-    return EventDataBase::data<RST>();
-  }
+  DataPtr data() const { return EventDataBase::data<RST>(); }
 
   bool valid() const {
     return EventDataBase::valid() &&
