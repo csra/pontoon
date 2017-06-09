@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     uint timestamp = rsc::misc::currentTimeMicros();
     auto rsb_time = create_rsb_time(timestamp);
     auto ros_time = create_ros_time(timestamp);
-    rsb_informer.publish(rsb_time);
+    rsb_informer.publish(rsb_time,pontoon::io::Causes());
     ros_informer.publish(ros_time);
     std::cout << "Microseconds since utc-epoch: " << timestamp << std::endl;
     sleep_until(timestamp, delta * 1000);

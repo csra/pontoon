@@ -123,8 +123,8 @@ int main(int argc, char **argv) {
   if (encoding == "none") {
     auto out = std::make_shared<ImageInformer>(out_scope);
     auto connection =
-        in->connect([&scale,&out](ImageListener::DataType image) {
-          out->publish(scale.scale(image.data()));
+        in->connect([&scale, &out](ImageListener::DataType image) {
+          out->publish(scale.scale(image.data()),image.causes());
         });
     block();
 
@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
     EncodeRstVisionImage compress(encoder);
     auto connection =
         in->connect([&scale, &compress, &out](ImageListener::DataType image) {
-          out->publish(compress.encode(scale.scale(image.data())));
+          out->publish(compress.encode(scale.scale(image.data())),image.causes());
         });
     block();
   }

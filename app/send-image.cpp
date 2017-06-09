@@ -90,11 +90,11 @@ int main(int argc, char **argv) {
   auto image = pontoon::io::ImageIO::readImage(file);
   if (type == "img") {
     pontoon::io::rst::InformerCVImage informer(out_uri);
-    informer.publish(image);
+    informer.publish(image,pontoon::io::Causes());
   } else {
     pontoon::convert::EncodeRstVisionImage encoder(
         pontoon::convert::ImageEncoding::stringToType(type));
     pontoon::io::rst::Informer<rst::vision::EncodedImage> informer(out_uri);
-    informer.publish(encoder.encode(image));
+    informer.publish(encoder.encode(image),pontoon::io::Causes());
   }
 }

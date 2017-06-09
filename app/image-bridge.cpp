@@ -94,6 +94,6 @@ int main(int argc, char **argv) {
     pontoon::convert::ConvertRstRosImage::RosType ros_img;
     queue.pop(ros_img);
     auto msg = pontoon::convert::ConvertRstRosImage::convert(ros_img);
-    rsbInformer->publish(msg);
+    rsbInformer->publish(msg,pontoon::io::Causes());
   }
 }

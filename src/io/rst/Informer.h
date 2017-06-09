@@ -17,11 +17,12 @@
 
 #pragma once
 
+#include "io/Cause.h"
+#include "utils/RsbHelpers.h"
+#include "utils/Subject.h"
 #include <rsb/Factory.h>
 #include <rsb/Informer.h>
 #include <rsc/runtime/TypeStringTools.h>
-#include <utils/RsbHelpers.h>
-#include <utils/Subject.h>
 
 namespace pontoon {
 namespace io {
@@ -40,7 +41,13 @@ public:
 
   virtual ~Informer() {}
 
-  virtual void publish(DataPtr data) { m_Informer->publish(data); }
+  virtual void publish(DataPtr data, const pontoon::io::Causes& causes) {
+    auto event = m_Informer->createEvent();
+    for (auto cause : causes) {
+      event->addCause(cause);
+    }
+    m_Informer->publish(event);
+  }
 
 private:
   typename rsb::Informer<RST>::Ptr m_Informer;
