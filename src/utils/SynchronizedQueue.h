@@ -29,6 +29,7 @@ public:
   typedef std::mutex Mutex;
   typedef std::unique_lock<Mutex> Lock;
   typedef std::condition_variable ConditionVariable;
+  typedef Data DataType;
 
   SynchronizedQueue(size_t maximum_size = -1) : max_size(maximum_size) {}
 
