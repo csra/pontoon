@@ -28,9 +28,11 @@ using pontoon::io::rst::EventData;
 using rsb::filter::FilterPtr;
 using rsb::filter::TypeFilter;
 
+const std::string IMAGE_TYPE_STRING = rsc::runtime::typeName<IplImage>();
+
 ListenerCVImageRstImage::ListenerCVImageRstImage(const std::string &uri) {
   m_Listener = pontoon::utils::rsbhelpers::createListener(uri);
-  m_Listener->addFilter(FilterPtr(new TypeFilter("_IplImage")));
+  m_Listener->addFilter(FilterPtr(new TypeFilter(IMAGE_TYPE_STRING)));
   m_Handler = boost::make_shared<rsb::EventFunctionHandler>(
       boost::bind(&ListenerCVImageRstImage::handle, this, _1));
   m_Listener->addHandler(m_Handler);
@@ -51,6 +53,7 @@ ListenerCVImageRstEncodedImage::ListenerCVImageRstEncodedImage(
       rsb::EventPtr event(new rsb::Event(*data.event()));
       convert::DecodeRstVisionEncodedImage decoder;
       event->setData(decoder.decode(data.data()));
+      event->setType(IMAGE_TYPE_STRING);
       notify(EventData<IplImage>(event));
   });
 }
