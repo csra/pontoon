@@ -43,14 +43,14 @@ CompressRstImageZlib::compress(const UncompressedImagePtr image) {
 
   // reserve buffer size
   ulong bound = ::compressBound(image->data().size());
-  if (m_BufferSize < bound) {
-    m_Buffer = std::unique_ptr<unsigned char>(new unsigned char[bound]);
-    m_BufferSize = bound;
+  if (_BufferSize < bound) {
+    _Buffer = std::unique_ptr<unsigned char>(new unsigned char[bound]);
+    _BufferSize = bound;
   }
 
-  ulong length = m_BufferSize;
+  ulong length = _BufferSize;
   auto time = boost::get_system_time();
-  int error = ::compress2(m_Buffer.get(), &length,
+  int error = ::compress2(_Buffer.get(), &length,
                           (const unsigned char *)image->data().c_str(),
                           image->data().size(), 1);
   std::cout << "compress: "
@@ -65,7 +65,7 @@ CompressRstImageZlib::compress(const UncompressedImagePtr image) {
   assert(length <= std::numeric_limits<size_t>::max());
 
   result->set_allocated_data(
-      new std::string((const char *)m_Buffer.get(), (size_t)length));
+      new std::string((const char *) _Buffer.get(), (size_t)length));
   std::cout << "reduced from " << image->data().size() << " = "
             << 8 * (image->data().size() /
                     (double)(image->width() * image->height()))

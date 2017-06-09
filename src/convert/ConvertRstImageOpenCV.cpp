@@ -29,8 +29,8 @@ using pontoon::convert::EncodeRstVisionImage;
 using pontoon::convert::DecodeRstVisionEncodedImage;
 
 EncodeRstVisionImage::EncodeRstVisionImage(const ImageEncoding::Type &type)
-    : m_Encoding(type),
-      m_TypeString(std::string(".") + ImageEncoding::typeToString(type)) {}
+    : _Encoding(type),
+      _TypeString(std::string(".") + ImageEncoding::typeToString(type)) {}
 
 ImageEncoding::CodedPtr
 EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
@@ -41,10 +41,10 @@ EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
     int bmpsize = mat.total() * 3;
     ImageEncoding::CodedPtr resultImg(
         rst::vision::EncodedImage::default_instance().New());
-    resultImg->set_encoding((rst::vision::EncodedImage_Encoding)m_Encoding);
-    cv::imencode(m_TypeString, mat, result);
+    resultImg->set_encoding((rst::vision::EncodedImage_Encoding) _Encoding);
+    cv::imencode(_TypeString, mat, result);
     resultImg->set_data(result.data(), result.size());
-    std::cerr << m_TypeString << " c.f.: " << std::setprecision(4) << std::fixed
+    std::cerr << _TypeString << " c.f.: " << std::setprecision(4) << std::fixed
               << result.size() / (double)bmpsize << " ( in "
               << (boost::get_system_time() - time).total_nanoseconds() /
                      1000000.
@@ -52,7 +52,7 @@ EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
     return resultImg;
   } catch (std::exception &e) {
     std::stringstream error;
-    error << "Cannot convert: " << image.get() << " to " << m_TypeString
+    error << "Cannot convert: " << image.get() << " to " << _TypeString
           << " - " << e.what();
     throw utils::Exception(error.str());
   }

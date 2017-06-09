@@ -35,8 +35,8 @@ public:
   UncompressedImagePtr decompress(const CompressedImagePtr);
 
 private:
-  ulong m_BufferSize = 0;
-  std::unique_ptr<unsigned char> m_Buffer;
+  ulong _BufferSize = 0;
+  std::unique_ptr<unsigned char> _Buffer;
 };
 
 } // namespace extract

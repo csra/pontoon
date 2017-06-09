@@ -28,13 +28,13 @@ using pontoon::io::ImageIO;
 ImageIO::FileNameGenerator::FileNameGenerator(const std::string &prefix,
                                               const std::string &suffix,
                                               int start, int padding)
-    : m_Prefix(prefix), m_Suffix(suffix), m_Padding(padding), m_Current(start) {
+    : _Prefix(prefix), _Suffix(suffix), _Padding(padding), _Current(start) {
 }
 
 std::string ImageIO::FileNameGenerator::nextFilename() {
   std::stringstream s;
-  s << m_Prefix << std::setfill('0') << std::setw(m_Padding) << m_Current++
-    << m_Suffix;
+  s << _Prefix << std::setfill('0') << std::setw(_Padding) << _Current++
+    << _Suffix;
   return s.str();
 }
 

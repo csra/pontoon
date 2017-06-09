@@ -36,21 +36,21 @@ public:
 
   Informer(const std::string &uri) {
     utils::rsbhelpers::register_rst<RST>();
-    m_Informer = utils::rsbhelpers::createInformer<RST>(uri);
+    _Informer = utils::rsbhelpers::createInformer<RST>(uri);
   }
 
   virtual ~Informer() {}
 
   virtual void publish(DataPtr data, const pontoon::io::Causes &causes) {
-    auto event = m_Informer->createEvent();
+    auto event = _Informer->createEvent();
     for (auto cause : causes) {
       event->addCause(cause);
     }
-    m_Informer->publish(event);
+    _Informer->publish(event);
   }
 
 private:
-  typename rsb::Informer<RST>::Ptr m_Informer;
+  typename rsb::Informer<RST>::Ptr _Informer;
 };
 
 template <typename RST> class Publisher : private Informer<RST> {
@@ -60,14 +60,14 @@ public:
   Publisher(const std::string &scope,
             typename utils::Subject<boost::shared_ptr<RST>>::Ptr subject)
       : Informer<RST>(scope) {
-    m_Connection = subject->connect(
+    _Connection = subject->connect(
         [this](boost::shared_ptr<RST> data) { this->publish(data); });
   }
 
-  ~Publisher() { m_Connection.disconnect(); }
+  ~Publisher() { _Connection.disconnect(); }
 
 private:
-  typename utils::Subject<boost::shared_ptr<RST>>::Connection m_Connection;
+  typename utils::Subject<boost::shared_ptr<RST>>::Connection _Connection;
 };
 
 } // namespace rst

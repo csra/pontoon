@@ -37,10 +37,10 @@ public:
     std::string nextFreeFilename();
 
   private:
-    std::string m_Prefix;
-    std::string m_Suffix;
-    int m_Padding;
-    int m_Current;
+    std::string _Prefix;
+    std::string _Suffix;
+    int _Padding;
+    int _Current;
   };
 
   static bool writeImage(const std::string &file_name,

@@ -75,30 +75,30 @@ public:
   typedef std::shared_ptr<Listener<RST>> Ptr;
 
   Listener(const std::string &uri, bool filter_subscopes = false)
-      : m_Type(rsc::runtime::typeName(typeid(RST))) {
+      : _Type(rsc::runtime::typeName(typeid(RST))) {
     utils::rsbhelpers::register_rst<RST>();
-    m_Listener = utils::rsbhelpers::createListener(uri);
-    m_Listener->addFilter(
+    _Listener = utils::rsbhelpers::createListener(uri);
+    _Listener->addFilter(
         rsb::filter::FilterPtr(rsb::filter::TypeFilter::createForType<RST>()));
     if (filter_subscopes) {
-      m_Listener->addFilter(rsb::filter::FilterPtr(new rsb::filter::ScopeFilter(
+      _Listener->addFilter(rsb::filter::FilterPtr(new rsb::filter::ScopeFilter(
           rsb::Scope(pontoon::utils::rsbhelpers::parseScope(uri)))));
     }
-    m_Handler = boost::make_shared<rsb::EventFunctionHandler>(
+    _Handler = boost::make_shared<rsb::EventFunctionHandler>(
         boost::bind(&Listener<RST>::handle, this, _1));
-    m_Listener->addHandler(m_Handler);
+    _Listener->addHandler(_Handler);
   }
 
-  virtual ~Listener() { m_Listener->removeHandler(m_Handler); }
+  virtual ~Listener() { _Listener->removeHandler(_Handler); }
 
   void handle(rsb::EventPtr event) { this->notify(EventData<RST>(event)); }
 
-  const std::string &type() const { return m_Type; }
+  const std::string &type() const { return _Type; }
 
 private:
-  const std::string m_Type;
-  rsb::ListenerPtr m_Listener;
-  rsb::HandlerPtr m_Handler;
+  const std::string _Type;
+  rsb::ListenerPtr _Listener;
+  rsb::HandlerPtr _Handler;
 };
 
 } // namespace rst

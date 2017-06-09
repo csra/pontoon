@@ -31,15 +31,15 @@ using rsb::filter::TypeFilter;
 const std::string IMAGE_TYPE_STRING = rsc::runtime::typeName<IplImage>();
 
 ListenerCVImageRstImage::ListenerCVImageRstImage(const std::string &uri) {
-  m_Listener = pontoon::utils::rsbhelpers::createListener(uri);
-  m_Listener->addFilter(FilterPtr(new TypeFilter(IMAGE_TYPE_STRING)));
-  m_Handler = boost::make_shared<rsb::EventFunctionHandler>(
+  _Listener = pontoon::utils::rsbhelpers::createListener(uri);
+  _Listener->addFilter(FilterPtr(new TypeFilter(IMAGE_TYPE_STRING)));
+  _Handler = boost::make_shared<rsb::EventFunctionHandler>(
       boost::bind(&ListenerCVImageRstImage::handle, this, _1));
-  m_Listener->addHandler(m_Handler);
+  _Listener->addHandler(_Handler);
 }
 
 ListenerCVImageRstImage::~ListenerCVImageRstImage() {
-  m_Listener->removeHandler(m_Handler);
+  _Listener->removeHandler(_Handler);
 }
 
 void ListenerCVImageRstImage::handle(rsb::EventPtr data) {
@@ -48,9 +48,9 @@ void ListenerCVImageRstImage::handle(rsb::EventPtr data) {
 
 ListenerCVImageRstEncodedImage::ListenerCVImageRstEncodedImage(
     const std::string &uri)
-    : m_Listener(uri, false) {
-  m_Connection =
-      m_Listener.connect([this](EventData<::rst::vision::EncodedImage> data) {
+    : _Listener(uri, false) {
+  _Connection =
+      _Listener.connect([this](EventData<::rst::vision::EncodedImage> data) {
         rsb::EventPtr event(new rsb::Event(*data.event()));
         convert::DecodeRstVisionEncodedImage decoder;
         event->setData(decoder.decode(data.data()));
@@ -60,7 +60,7 @@ ListenerCVImageRstEncodedImage::ListenerCVImageRstEncodedImage(
 }
 
 ListenerCVImageRstEncodedImage::~ListenerCVImageRstEncodedImage() {
-  m_Connection.disconnect();
+  _Connection.disconnect();
 }
 
 CombinedCVImageListener::CombinedCVImageListener(const std::string &uri)

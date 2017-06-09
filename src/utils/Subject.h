@@ -36,36 +36,36 @@ public:
   virtual ~Subject() = default;
 
   Connection connect(std::function<void(Data)> subscriber) {
-    return m_Signal.connect(subscriber);
+    return _Signal.connect(subscriber);
   }
 
   void disconnect(Connection subscriber) { subscriber.disconnect(); }
 
-  void notify(Data data) { m_Signal(data); }
+  void notify(Data data) { _Signal(data); }
 
 private:
-  Signal m_Signal;
+  Signal _Signal;
 };
 
 template <typename Data> class CompositeSubject : public Subject<Data> {
 public:
   CompositeSubject(const std::vector<typename Subject<Data>::Ptr> subjects)
-      : m_Subjects(subjects) {
+      : _Subjects(subjects) {
     for (auto s : subjects) {
-      m_Connections.push_back(
+      _Connections.push_back(
           s->connect([this](Data data) { this->notify(data); }));
     }
   }
 
   virtual ~CompositeSubject() {
-    for (auto c : m_Connections) {
+    for (auto c : _Connections) {
       c.disconnect();
     }
   }
 
 private:
-  std::vector<typename Subject<Data>::Ptr> m_Subjects;
-  std::vector<typename Subject<Data>::Connection> m_Connections;
+  std::vector<typename Subject<Data>::Ptr> _Subjects;
+  std::vector<typename Subject<Data>::Connection> _Connections;
 };
 
 } // namespace utils

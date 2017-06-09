@@ -40,8 +40,8 @@ public:
   ~ListenerCVImageRstImage();
 
 private:
-  rsb::ListenerPtr m_Listener;
-  rsb::HandlerPtr m_Handler;
+  rsb::ListenerPtr _Listener;
+  rsb::HandlerPtr _Handler;
 
   void handle(rsb::EventPtr data);
 };
@@ -55,8 +55,8 @@ public:
 
 private:
   typedef pontoon::io::rst::Listener<::rst::vision::EncodedImage> ListenerType;
-  ListenerType m_Listener;
-  ListenerType::Connection m_Connection;
+  ListenerType _Listener;
+  ListenerType::Connection _Connection;
 };
 
 class CombinedCVImageListener

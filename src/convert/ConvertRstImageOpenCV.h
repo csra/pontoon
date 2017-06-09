@@ -51,8 +51,8 @@ public:
   ImageEncoding::CodedPtr encode(const ImageEncoding::UncodedPtr);
 
 private:
-  const ImageEncoding::Type m_Encoding;
-  const std::string m_TypeString;
+  const ImageEncoding::Type _Encoding;
+  const std::string _TypeString;
 };
 
 class DecodeRstVisionEncodedImage {

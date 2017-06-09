@@ -38,21 +38,21 @@ public:
   typedef boost::shared_ptr<DataType> DataPtr;
 
   InformerCVImage(const std::string &uri) {
-    m_Informer = utils::rsbhelpers::createInformer<DataType>(uri);
+    _Informer = utils::rsbhelpers::createInformer<DataType>(uri);
   }
 
   virtual ~InformerCVImage() {}
 
   virtual void publish(DataPtr data, const pontoon::io::Causes &causes) {
-    auto event = m_Informer->createEvent();
+    auto event = _Informer->createEvent();
     for (auto cause : causes) {
       event->addCause(cause);
     }
-    m_Informer->publish(event);
+    _Informer->publish(event);
   }
 
 private:
-  typename rsb::Informer<DataType>::Ptr m_Informer;
+  typename rsb::Informer<DataType>::Ptr _Informer;
 };
 
 } // namespace rst
