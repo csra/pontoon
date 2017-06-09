@@ -24,18 +24,7 @@ namespace pontoon {
 namespace utils {
 namespace cvhelpers {
 
-boost::shared_ptr<IplImage> asIplImagePtr(boost::shared_ptr<cv::Mat> mat) {
-  class CustomMatDeleter {
-  private:
-    boost::shared_ptr<cv::Mat> mat;
-
-  public:
-    CustomMatDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
-
-    void operator()(IplImage *img) { delete img; }
-  };
-  return boost::shared_ptr<IplImage>(new IplImage(*mat), CustomMatDeleter(mat));
-}
+boost::shared_ptr<IplImage> asIplImagePtr(boost::shared_ptr<cv::Mat> mat);
 
 } // namespace cvhelpers
 } // namespace utils

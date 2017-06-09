@@ -16,3 +16,19 @@
 ********************************************************************/
 
 #include "CvHelpers.h"
+
+namespace  {
+  class CustomMatDeleter {
+  private:
+    boost::shared_ptr<cv::Mat> mat;
+
+  public:
+    CustomMatDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
+
+    void operator()(IplImage *img) { delete img; }
+  };
+}
+
+boost::shared_ptr<IplImage> pontoon::utils::cvhelpers::asIplImagePtr(boost::shared_ptr<cv::Mat> mat) {
+  return boost::shared_ptr<IplImage>(new IplImage(*mat), CustomMatDeleter(mat));
+}
