@@ -19,14 +19,16 @@
 
 #include <boost/program_options.hpp>
 
-#include <convert/ConvertRstImageOpenCV.h>
-#include <io/rst/Informer.h>
-#include <io/rst/ListenerCVImage.h>
+#include "convert/ConvertRstImageOpenCV.h"
+#include "convert/ScaleImageOpenCV.h"
+#include "io/rst/Informer.h"
+#include "io/rst/ListenerCVImage.h"
 
 typedef pontoon::io::rst::ListenerCVImageRstImage ImageListener;
 typedef pontoon::io::rst::Informer<rst::vision::EncodedImage> ImageInformer;
 
 using pontoon::convert::ImageEncoding;
+using pontoon::convert::ScaleImageOpenCV;
 using pontoon::convert::EncodeRstVisionImage;
 
 int main(int argc, char **argv) {
@@ -38,25 +40,34 @@ int main(int argc, char **argv) {
   description_text << description << "\n\n"
                    << "Allowed options";
   boost::program_options::options_description desc(description_text.str());
-  desc.add_options()("help,h", "produce help message")
+  desc.add_options()("help,h", "produce help message");
 
-      ("input-uri,i",
-       boost::program_options::value<std::string>()->default_value(
-           "/video/raw"),
-       "The input rsb uri to receive raw images.")
+  desc.add_options()(
+      "input-uri,i",
+      boost::program_options::value<std::string>()->default_value("/video/raw"),
+      "The input rsb uri to receive raw images.");
 
-          ("output-uri,o",
-           boost::program_options::value<std::string>()->default_value(
-               "/video/encoded"),
-           "The output rsb uri to publish encoded images.")
+  desc.add_options()(
+      "output-uri,o",
+      boost::program_options::value<std::string>()->default_value(
+          "/video/encoded"),
+      "The output rsb uri to publish encoded images.");
 
-              ("encoding,e",
-               boost::program_options::value<std::string>()->default_value(
-                   "jpg"),
-               "The output encoding to use. Can be on of ( bmp | ppm | png | "
-               "jpg | jp2 | tiff ).")
+  desc.add_options()(
+      "encoding,e",
+      boost::program_options::value<std::string>()->default_value("jpg"),
+      "The output encoding to use. Can be on of ( bmp | ppm | png | "
+      "jpg | jp2 | tiff ).");
 
-      ;
+  desc.add_options()("scale-width,x",
+                     boost::program_options::value<double>()->default_value(1.),
+                     "Scale the output image-width by the passed factor.");
+
+  desc.add_options()("scale-height,y",
+                     boost::program_options::value<double>()->default_value(1.),
+                     "Scale the output image-height by the passed factor.");
+
+  ;
 
   try {
     boost::program_options::store(
@@ -87,6 +98,12 @@ int main(int argc, char **argv) {
 
   const std::string in_scope = program_options["input-uri"].as<std::string>();
   const std::string out_scope = program_options["output-uri"].as<std::string>();
+  const double scale_width = program_options["scale-width"].as<double>();
+  const double scale_height = program_options["scale-height"].as<double>();
+  if (scale_height <= 0 || scale_width <= 0) {
+    std::cerr << "Cannot scale images with a factor of 0 or less.";
+    return 1;
+  }
 
   const ImageEncoding::Type encoding = ImageEncoding::stringToType(
       program_options["encoding"].as<std::string>());
@@ -95,10 +112,11 @@ int main(int argc, char **argv) {
   auto in = std::make_shared<ImageListener>(in_scope);
   auto out = std::make_shared<ImageInformer>(out_scope);
 
+  ScaleImageOpenCV scale(scale_width,scale_height);
   EncodeRstVisionImage compress(encoding);
   auto connection =
-      in->connect([&compress, &out](ImageListener::DataType image) {
-        out->publish(compress.encode(image.data()));
+      in->connect([&scale, &compress, &out](ImageListener::DataType image) {
+        out->publish(compress.encode(scale.scale(image.data())));
       });
 
   std::cerr << "Ready..." << std::endl;
