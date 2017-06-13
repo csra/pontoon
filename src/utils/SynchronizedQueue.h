@@ -30,6 +30,7 @@ public:
   typedef std::unique_lock<Mutex> Lock;
   typedef std::condition_variable ConditionVariable;
   typedef Data DataType;
+  typedef std::chrono::milliseconds Milliseconds;
 
   SynchronizedQueue(size_t maximum_size = -1) : max_size(maximum_size) {}
 
@@ -62,6 +63,21 @@ public:
     popped_value = queue.front();
     queue.pop();
     return true;
+  }
+
+  bool try_pop_for(Data &popped_value, Milliseconds& duration) {
+    auto until = std::chrono::system_clock::now() + duration;
+    Lock lock(mutex);
+    while(!exit && queue.empty() && std::chrono::system_clock::now() < until){
+      condition.wait_until(lock,until);
+    }
+    if(!queue.empty()){
+      popped_value = queue.front();
+      queue.pop();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void pop(Data &data) {

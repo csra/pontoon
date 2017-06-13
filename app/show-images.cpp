@@ -87,14 +87,14 @@ int main(int argc, char **argv) {
   cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
   int key = -1;
   cv::Mat image;
+  ImageQueue::Milliseconds wait_time(100);
   while (key != 27) {
     ImageQueue::DataType img;
-    queue.pop(img);
-    if (img.valid()) {
+    if (queue.try_pop_for(img,wait_time) && img.valid()) {
       image = cv::cvarrToMat(img.data().get());
       cv::imshow(window_name, image);
     }
-    key = cv::waitKey(10);
+    key = cv::waitKey(1);
   }
   std::cout << "ESCAPE received. Leaving application." << std::endl;
 }
