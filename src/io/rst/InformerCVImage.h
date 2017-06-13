@@ -48,6 +48,7 @@ public:
     for (auto cause : causes) {
       event->addCause(cause);
     }
+    event->setData(data);
     _Informer->publish(event);
   }
 
