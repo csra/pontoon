@@ -65,7 +65,7 @@ CompressRstImageZlib::compress(const UncompressedImagePtr image) {
   assert(length <= std::numeric_limits<size_t>::max());
 
   result->set_allocated_data(
-      new std::string((const char *) _Buffer.get(), (size_t)length));
+      new std::string((const char *)_Buffer.get(), (size_t)length));
   std::cout << "reduced from " << image->data().size() << " = "
             << 8 * (image->data().size() /
                     (double)(image->width() * image->height()))

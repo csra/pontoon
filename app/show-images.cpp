@@ -17,8 +17,8 @@
 
 #include "io/ImageIO.h"
 #include "io/rst/ListenerCVImage.h"
-#include "utils/SynchronizedQueue.h"
 #include "utils/FpsLimiter.h"
+#include "utils/SynchronizedQueue.h"
 #include <boost/program_options.hpp>
 #include <memory>
 #include <mutex>
@@ -142,7 +142,7 @@ private: // helper functions
   }
 
   void writeImages(std::unique_ptr<cv::Mat> &dst) {
-    cv::Size required_dst_size(_columns * _cell_width,_rows * _cell_height);
+    cv::Size required_dst_size(_columns * _cell_width, _rows * _cell_height);
     if (dst->size() != required_dst_size) {
       dst.reset(new cv::Mat(required_dst_size, dst->type()));
       dst->setTo(0);
@@ -157,27 +157,27 @@ private: // helper functions
   }
 };
 
-void fix_grid_first(size_t &first, size_t &second, size_t sum){
-  if(second >= sum) {
+void fix_grid_first(size_t &first, size_t &second, size_t sum) {
+  if (second >= sum) {
     second = sum;
     first = 1;
     return;
   }
-  first = sum/second;
-  if(first*second < sum){
+  first = sum / second;
+  if (first * second < sum) {
     ++first;
   }
 }
 
-void fix_grid(size_t &rows, size_t &cols, size_t sum){
-  if(rows == 0 && cols == 0){
+void fix_grid(size_t &rows, size_t &cols, size_t sum) {
+  if (rows == 0 && cols == 0) {
     rows = std::sqrt(sum);
-    fix_grid_first(cols,rows,sum);
+    fix_grid_first(cols, rows, sum);
     return;
-  } else if (cols == 0){
-    fix_grid_first(cols,rows,sum);
+  } else if (cols == 0) {
+    fix_grid_first(cols, rows, sum);
   } else {
-    fix_grid_first(rows,cols,sum);
+    fix_grid_first(rows, cols, sum);
   }
 }
 
@@ -211,7 +211,6 @@ int main(int argc, char **argv) {
   desc.add_options()("fps,f",
                      boost::program_options::value<double>()->default_value(30),
                      "The maximum amount of frames to show per second");
-
 
   try {
     boost::program_options::store(
@@ -250,19 +249,19 @@ int main(int argc, char **argv) {
 
   auto rows = program_options["rows"].as<size_t>();
   auto cols = program_options["cols"].as<size_t>();
-  fix_grid(rows,cols,listeners.size());
+  fix_grid(rows, cols, listeners.size());
 
   CombineImages combine(listeners, rows, cols);
 
   std::string window_name("pontoon-show-images");
   cv::namedWindow(window_name, cv::WINDOW_AUTOSIZE);
   int key = -1;
-  std::unique_ptr<cv::Mat> image(new cv::Mat(0,0,CV_8UC3));
+  std::unique_ptr<cv::Mat> image(new cv::Mat(0, 0, CV_8UC3));
   FpsLimiter fps(program_options["fps"].as<double>());
   size_t frame = 0;
   while (key != 27) {
     combine.update(image);
-    if(!image->empty()){
+    if (!image->empty()) {
       cv::imshow(window_name, *image);
     }
     key = cv::waitKey(1);

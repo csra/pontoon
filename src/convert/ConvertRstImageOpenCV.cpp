@@ -41,7 +41,7 @@ EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
     int bmpsize = mat.total() * 3;
     ImageEncoding::CodedPtr resultImg(
         rst::vision::EncodedImage::default_instance().New());
-    resultImg->set_encoding((rst::vision::EncodedImage_Encoding) _Encoding);
+    resultImg->set_encoding((rst::vision::EncodedImage_Encoding)_Encoding);
     cv::imencode(_TypeString, mat, result);
     resultImg->set_data(result.data(), result.size());
     std::cerr << _TypeString << " c.f.: " << std::setprecision(4) << std::fixed
@@ -52,8 +52,8 @@ EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
     return resultImg;
   } catch (std::exception &e) {
     std::stringstream error;
-    error << "Cannot convert: " << image.get() << " to " << _TypeString
-          << " - " << e.what();
+    error << "Cannot convert: " << image.get() << " to " << _TypeString << " - "
+          << e.what();
     throw utils::Exception(error.str());
   }
 }
