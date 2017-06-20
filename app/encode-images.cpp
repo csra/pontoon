@@ -31,6 +31,27 @@ typedef pontoon::io::rst::Informer<rst::vision::EncodedImage>
 using pontoon::convert::ImageEncoding;
 using pontoon::convert::ScaleImageOpenCV;
 using pontoon::convert::EncodeRstVisionImage;
+using pontoon::utils::Subject;
+
+template <typename T> class SkippingSubject : public Subject<T> {
+public:
+  SkippingSubject(typename Subject<T>::Ptr source, double skip)
+      : _source(source) {
+    _received = skip;
+    _connection = source->connect([this, skip](T data) {
+      this->_received += 1.;
+      if (this->_received >= skip) {
+        this->_received -= skip;
+        this->notify(data);
+      }
+    });
+  }
+
+private:
+  typename Subject<T>::Ptr _source;
+  typename Subject<T>::Connection _connection;
+  double _received;
+};
 
 void block() {
   std::cerr << "Ready..." << std::endl;
@@ -77,6 +98,11 @@ int main(int argc, char **argv) {
                      boost::program_options::value<double>()->default_value(1.),
                      "Scale the output image-height by the passed factor.");
 
+  desc.add_options()("skip-frames,s",
+                     boost::program_options::value<double>()->default_value(0.),
+                     "The rate of received images to be ignored. Can be used "
+                     "to reduce frame rate.");
+
   ;
 
   try {
@@ -110,12 +136,16 @@ int main(int argc, char **argv) {
   const std::string out_scope = program_options["output-uri"].as<std::string>();
   const double scale_width = program_options["scale-width"].as<double>();
   const double scale_height = program_options["scale-height"].as<double>();
+  const double skip_frames = program_options["skip-frames"].as<double>();
+
   if (scale_height <= 0 || scale_width <= 0) {
     std::cerr << "Cannot scale images with a factor of 0 or less.";
     return 1;
   }
+
   ScaleImageOpenCV scale(scale_width, scale_height);
-  auto in = std::make_shared<ImageListener>(in_scope);
+  auto in = std::make_shared<SkippingSubject<ImageListener::DataType>>(
+      std::make_shared<ImageListener>(in_scope), skip_frames);
 
   const std::string encoding = program_options["encoding"].as<std::string>();
   if (encoding == "none") {
