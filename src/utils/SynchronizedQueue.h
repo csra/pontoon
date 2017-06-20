@@ -65,13 +65,13 @@ public:
     return true;
   }
 
-  bool try_pop_for(Data &popped_value, Milliseconds& duration) {
+  bool try_pop_for(Data &popped_value, Milliseconds &duration) {
     auto until = std::chrono::system_clock::now() + duration;
     Lock lock(mutex);
-    while(!exit && queue.empty() && std::chrono::system_clock::now() < until){
-      condition.wait_until(lock,until);
+    while (!exit && queue.empty() && std::chrono::system_clock::now() < until) {
+      condition.wait_until(lock, until);
     }
-    if(!queue.empty()){
+    if (!queue.empty()) {
       popped_value = queue.front();
       queue.pop();
       return true;
