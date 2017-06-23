@@ -36,7 +36,7 @@ namespace rst {
 class EventDataBase {
 public:
   using EventPtr = boost::shared_ptr<rsb::Event>;
-  using Cause = ::pontoon::io::Causes;
+  using Cause = ::pontoon::io::Cause;
 
   EventDataBase() {}
   EventDataBase(EventPtr event) : _event(event) {}
@@ -44,7 +44,7 @@ public:
 
   virtual EventPtr event() const final { return _event; }
   virtual bool valid() const { return _event.get() != nullptr; }
-  virtual Causes causes() const { return _event->getCauses(); }
+  virtual Cause cause() const { return _event->getId(); }
 
   template <typename RST> boost::shared_ptr<RST> data() const {
     return boost::static_pointer_cast<RST>(event()->getData());
