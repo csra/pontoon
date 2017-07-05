@@ -23,7 +23,7 @@
 #include <boost/program_options.hpp>
 #include <mutex>
 
-typedef pontoon::io::rst::ListenerCVImageRstImage ImageListener;
+typedef pontoon::io::rst::CombinedCVImageListener ImageListener;
 typedef pontoon::io::rst::InformerCVImage ImageInformer;
 typedef pontoon::io::rst::Informer<rst::vision::EncodedImage>
     EncodedImageInformer;
