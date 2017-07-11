@@ -39,13 +39,13 @@ typedef pontoon::io::rst::EventData<IplImage> ImageData;
 
 struct FaceData {
   rsb::EventPtr event;
-  std::vector<Face> faces;
+  std::vector<cv::Rect> faces;
 
   FaceData(pontoon::io::rst::EventData<FaceWithGazeCollection> &data)
       : event(data.event()) {
     for (auto facewithgaze : data.data()->element()) {
       if (facewithgaze.has_region()) {
-        faces.push_back(facewithgaze.region());
+        faces.push_back(faceToRoi(facewithgaze.region()));
       }
     }
   }
@@ -53,9 +53,14 @@ struct FaceData {
   FaceData(pontoon::io::rst::EventData<Faces> &data) : event(data.event()) {
     for (auto face : data.data()->faces()) {
       if (face.has_region()) {
-        faces.push_back(face);
+        faces.push_back(faceToRoi(face));
       }
     }
+  }
+
+  cv::Rect faceToRoi(const Face &face) {
+    return cv::Rect(face.region().top_left().x(), face.region().top_left().y(),
+                    face.region().width(), face.region().height());
   }
 };
 
@@ -69,6 +74,12 @@ struct ImageAndFaceData {
         causes{faces.event->getId(), image.event()->getId()} {}
 };
 
+static std::string eventMetaInfo(rsb::EventPtr event) {
+  std::stringstream str;
+  str << event->getId();
+  return str.str();
+}
+
 class ImageFaceListener : public Subject<ImageAndFaceData> {
 public:
   ImageFaceListener(const std::string &img_uri, const std::string &face_uri)
@@ -76,6 +87,7 @@ public:
         _facesListener2(face_uri) {
     _imageListener.connect([this](ImageData data) {
       if (data.valid()) {
+        std::lock_guard<std::mutex> lock(this->_mutex);
         this->_images.push_back(data);
         this->update();
       }
@@ -83,12 +95,16 @@ public:
     _facesListener1.connect(
         [this](pontoon::io::rst::EventData<FaceWithGazeCollection> data) {
           if (data.valid()) {
-            this->_faces.push_back(FaceData(data));
+            std::lock_guard<std::mutex> lock(this->_mutex);
+            FaceData d(data);
+            // this->_faces.push_back(FaceData(data));
+            this->_faces.push_back(d);
             this->update();
           }
         });
     _facesListener2.connect([this](pontoon::io::rst::EventData<Faces> data) {
       if (data.valid()) {
+        std::lock_guard<std::mutex> lock(this->_mutex);
         this->_faces.push_back(FaceData(data));
         this->update();
       }
@@ -97,25 +113,38 @@ public:
 
 private:
   void update() {
-    for (size_t i = 0; i < _faces.size(); ++i) {
-      FaceData &face = _faces[i];
-      for (size_t j = 0; j < _images.size(); ++j) {
-        ImageData &image = _images[j];
+    auto face_it = _faces.begin();
+    while (face_it != _faces.end()) {
+      FaceData &face = *face_it;
+      auto image_it = _images.begin();
+      while (image_it != _images.end()) {
+        ImageData &image = *image_it;
         if (face.event->getCauses().find(image.event()->getId()) !=
             face.event->getCauses().end()) {
           // found faces corresponding to image
           this->notify(ImageAndFaceData(face, image));
-          // cleanup
-          _faces.erase(_faces.begin() + i);
-          _images.erase(_images.begin() + j);
-          while (_faces.size() > _max_size) {
-            _faces.pop_front();
-          }
-          while (_images.size() > _max_size) {
-            _images.pop_front();
-          }
+          break;
+        } else {
+          ++image_it;
         }
       }
+      if (image_it != _images.end()) {
+        // need to remove notified match. increasing the face_iterator
+        face_it = _faces.erase(face_it);
+        image_it = _images.erase(image_it);
+      } else {
+        ++face_it;
+      }
+    }
+    while (_faces.size() > _max_size) {
+      std::cerr << "dropping old faces frame: "
+                << eventMetaInfo(_faces.front().event) << std::endl;
+      _faces.pop_front();
+    }
+    while (_images.size() > _max_size) {
+      std::cerr << "dropping old image frame: "
+                << eventMetaInfo(_images.front().event()) << std::endl;
+      _images.pop_front();
     }
   }
 
@@ -125,21 +154,36 @@ private:
   std::deque<ImageData> _images;
   std::deque<FaceData> _faces;
   size_t _max_size = 10;
+  std::mutex _mutex;
 };
+
+bool checkRoi(const cv::Rect &roi, const cv::Mat &mat) {
+  if (roi.x < 0 || roi.y < 0 || roi.height < 0 || roi.width < 0) {
+    std::cerr << "ERROR: Roi cannot have values < 0 (" << roi << ")"
+              << std::endl;
+    return false;
+  }
+  if (roi.x + roi.width > mat.cols || roi.y + roi.height > mat.rows) {
+    std::cerr << "ERROR: Roi must be in image (" << roi << ") image ("
+              << mat.cols << "x" << mat.rows << ")" << std::endl;
+    return false;
+  }
+  return true;
+}
 
 std::vector<boost::shared_ptr<IplImage>>
 cut_faces(const ImageAndFaceData &data) {
   std::vector<boost::shared_ptr<IplImage>> result;
   cv::Mat image = cv::cvarrToMat(data.image.data().get());
-  for (auto face : data.faces.faces) {
-    if (face.has_region()) {
-      auto x = face.region().top_left().x();
-      auto y = face.region().top_left().y();
-      auto w = face.region().width();
-      auto h = face.region().height();
-      cv::Rect roi(x, y, w, h);
+  auto faces = data.faces.faces;
+  for (auto roi : faces) {
+    if (checkRoi(roi, image)) {
       auto patch = boost::make_shared<cv::Mat>(image(roi));
       result.push_back(pontoon::utils::cvhelpers::asIplImagePtr(patch));
+    } else {
+      auto facesdata = boost::static_pointer_cast<FaceWithGazeCollection>(
+          data.faces.event->getData());
+      std::cerr << facesdata->DebugString() << std::endl;
     }
   }
   return result;
@@ -182,7 +226,8 @@ int main(int argc, char **argv) {
   desc.add_options()(
       "encoding,e",
       boost::program_options::value<std::string>()->default_value("jpg"),
-      "The output encoding to use. Can be on of ( none | ppm | png | jpg | jp2 "
+      "The output encoding to use. Can be on of ( none | ppm | png | jpg | "
+      "jp2 "
       "| tiff ). Is set to none, this application produces the usual "
       "rst::vision::Image data.");
 
