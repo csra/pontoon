@@ -56,6 +56,24 @@ private:
   typename rsb::Informer<DataType>::Ptr _Informer;
 };
 
+class EncodingImageInformer {
+public:
+  typedef std::shared_ptr<EncodingImageInformer> Ptr;
+  typedef IplImage DataType;
+  typedef boost::shared_ptr<DataType> DataPtr;
+
+  EncodingImageInformer(const std::string &uri,
+                        const std::string &encoding = "none",
+                        double scale_width = 1., double scale_height = 1.);
+
+  virtual ~EncodingImageInformer() {}
+
+  virtual void publish(DataPtr data, const pontoon::io::Causes &causes);
+
+private:
+  std::function<void(DataPtr, pontoon::io::Causes)> _callback;
+};
+
 } // namespace rst
 } // namespace io
 } // namespace pontoon
