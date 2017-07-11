@@ -15,22 +15,13 @@
 **                                                                 **
 ********************************************************************/
 
-#include "convert/ConvertRstImageOpenCV.h"
-#include "convert/ScaleImageOpenCV.h"
-#include "io/rst/Informer.h"
 #include "io/rst/InformerCVImage.h"
 #include "io/rst/ListenerCVImage.h"
 #include <boost/program_options.hpp>
 #include <mutex>
 
 typedef pontoon::io::rst::CombinedCVImageListener ImageListener;
-typedef pontoon::io::rst::InformerCVImage ImageInformer;
-typedef pontoon::io::rst::Informer<rst::vision::EncodedImage>
-    EncodedImageInformer;
-
-using pontoon::convert::ImageEncoding;
-using pontoon::convert::ScaleImageOpenCV;
-using pontoon::convert::EncodeRstVisionImage;
+typedef pontoon::io::rst::EncodingImageInformer ImageInformer;
 using pontoon::utils::Subject;
 
 template <typename T> class SkippingSubject : public Subject<T> {
@@ -143,30 +134,13 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  ScaleImageOpenCV scale(scale_width, scale_height);
   auto in = std::make_shared<SkippingSubject<ImageListener::DataType>>(
       std::make_shared<ImageListener>(in_scope), skip_frames);
 
-  const std::string encoding = program_options["encoding"].as<std::string>();
-  if (encoding == "none") {
-    auto out = std::make_shared<ImageInformer>(out_scope);
-    auto connection =
-        in->connect([&scale, &out](ImageListener::DataType image) {
-          out->publish(scale.scale(image.data()), {image.cause()});
-        });
-    block();
+  ImageInformer out(out_scope, program_options["encoding"].as<std::string>(),
+                    scale_width, scale_height);
+  auto connection = in->connect([&out](ImageListener::DataType data) {
+    out.publish(data.data(), {data.cause()});
+  });
 
-  } else {
-    const ImageEncoding::Type encoder = ImageEncoding::stringToType(
-        program_options["encoding"].as<std::string>());
-
-    auto out = std::make_shared<EncodedImageInformer>(out_scope);
-
-    EncodeRstVisionImage compress(encoder);
-    auto connection = in->connect([&scale, &compress,
-                                   &out](ImageListener::DataType image) {
-      out->publish(compress.encode(scale.scale(image.data())), {image.cause()});
-    });
-    block();
-  }
 }
