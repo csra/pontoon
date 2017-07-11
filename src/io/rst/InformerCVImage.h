@@ -74,6 +74,23 @@ private:
   std::function<void(DataPtr, pontoon::io::Causes)> _callback;
 };
 
+class EncodingMultiImageInformer {
+public:
+  typedef std::shared_ptr<EncodingMultiImageInformer> Ptr;
+  typedef std::vector<boost::shared_ptr<IplImage>> Data;
+
+  EncodingMultiImageInformer(const std::string &uri,
+                             const std::string &encoding = "none",
+                             double scale_width = 1., double scale_height = 1.);
+
+  virtual ~EncodingMultiImageInformer() {}
+
+  virtual void publish(Data data, const pontoon::io::Causes &causes);
+
+private:
+  std::function<void(Data, pontoon::io::Causes)> _callback;
+};
+
 } // namespace rst
 } // namespace io
 } // namespace pontoon

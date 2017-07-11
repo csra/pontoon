@@ -57,3 +57,34 @@ void EncodingImageInformer::publish(EncodingImageInformer::DataPtr data,
 }
 
 EncodingMultiImageInformer::EncodingMultiImageInformer(
+    const std::string &uri, const std::string &encoding, double scale_width,
+    double scale_height) {
+  auto scale = std::make_shared<pontoon::convert::ScaleImageOpenCV>(
+      scale_width, scale_height);
+  if (encoding == "none") {
+    throw pontoon::utils::Exception(
+        "Conversion to unencoded Image sets is currently not supported.");
+  } else {
+    const auto encoder =
+        pontoon::convert::ImageEncoding::stringToType(encoding);
+
+    auto out =
+        std::make_shared<Informer<::rst::vision::EncodedImageCollection>>(uri);
+    auto compress =
+        std::make_shared<pontoon::convert::EncodeRstVisionImage>(encoder);
+    _callback = [scale, compress, out](Data images, const Causes &causes) {
+      auto message =
+          boost::make_shared<::rst::vision::EncodedImageCollection>();
+      for (auto image : images) {
+        message->add_element()->CopyFrom(
+            *compress->encode(scale->scale(image)));
+      }
+      out->publish(message, causes);
+    };
+  }
+}
+
+void EncodingMultiImageInformer::publish(EncodingMultiImageInformer::Data data,
+                                         const pontoon::io::Causes &causes) {
+  _callback(data, causes);
+}
