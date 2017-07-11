@@ -142,5 +142,4 @@ int main(int argc, char **argv) {
   auto connection = in->connect([&out](ImageListener::DataType data) {
     out.publish(data.data(), {data.cause()});
   });
-
 }
