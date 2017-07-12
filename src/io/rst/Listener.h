@@ -50,6 +50,8 @@ public:
     return boost::static_pointer_cast<RST>(event()->getData());
   }
 
+  explicit operator bool() const { return this->valid(); }
+
 private:
   EventPtr _event;
 };
