@@ -140,6 +140,6 @@ int main(int argc, char **argv) {
   ImageInformer out(out_scope, program_options["encoding"].as<std::string>(),
                     scale_width, scale_height);
   auto connection = in->connect([&out](ImageListener::DataType data) {
-    out.publish(data.data(), {data.cause()});
+    out.publish(data.data(), {data.id()});
   });
 }

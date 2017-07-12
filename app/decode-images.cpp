@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
   pontoon::convert::DecodeRstVisionEncodedImage convert;
   auto connection =
       in->connect([&convert, &out](ImageListener::DataType image) {
-        out->publish(convert.decode(image.data()), {image.cause()});
+        out->publish(convert.decode(image.data()), {image.id()});
       });
 
   std::cerr << "Ready..." << std::endl;

@@ -44,7 +44,7 @@ public:
 
   virtual EventPtr event() const final { return _event; }
   virtual bool valid() const { return _event.get() != nullptr; }
-  virtual Cause cause() const { return _event->getId(); }
+  virtual Cause id() const { return _event->getId(); }
 
   explicit operator bool() const { return this->valid(); }
 
