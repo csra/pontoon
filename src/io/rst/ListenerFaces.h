@@ -27,12 +27,12 @@ namespace pontoon {
 namespace io {
 namespace rst {
 
-class ListenerFacesRst
+class ListenerFaces
     : public pontoon::utils::Subject<EventDataVector<::rst::vision::Face>> {
 public:
-  ListenerFacesRst(const std::string &uri);
+  ListenerFaces(const std::string &uri);
 
-  ~ListenerFacesRst();
+  ~ListenerFaces();
 
 private:
   rsb::ListenerPtr _listener;

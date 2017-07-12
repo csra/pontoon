@@ -76,7 +76,7 @@ ListenerCVImageRstEncodedImageCollection::
       [this](EventData<::rst::vision::EncodedImageCollection> data) {
         rsb::EventPtr event(new rsb::Event(*data.event()));
         convert::DecodeRstVisionEncodedImage decoder;
-        DataType::Data images;
+        DataType::DataType images;
         for (auto encoded_image : data.data()->element()) {
           images.push_back(decoder.decode(encoded_image));
         }

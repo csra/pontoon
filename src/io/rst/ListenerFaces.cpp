@@ -20,17 +20,17 @@
 #include <rst/vision/FaceWithGazeCollection.pb.h>
 #include <rst/vision/Faces.pb.h>
 
-using pontoon::io::rst::ListenerFacesRst;
+using pontoon::io::rst::ListenerFaces;
 using ::rst::vision::Face;
 using ::rst::vision::Faces;
 using ::rst::vision::FaceWithGazeCollection;
 
-ListenerFacesRst::ListenerFacesRst(const std::string &uri) {
+ListenerFaces::ListenerFaces(const std::string &uri) {
   pontoon::utils::rsbhelpers::register_rst<Faces, FaceWithGazeCollection>();
   _listener = pontoon::utils::rsbhelpers::createListener(uri);
   _handler = boost::make_shared<rsb::EventFunctionHandler>([this](
       rsb::EventPtr event) {
-    DataType::Data faces;
+    DataType::DataType faces;
     if (auto event_data = EventData<Faces>(event)) {
       for (const auto &face : event_data.data()->faces()) {
         faces.push_back(boost::make_shared<Face>(face));
@@ -47,4 +47,4 @@ ListenerFacesRst::ListenerFacesRst(const std::string &uri) {
   _listener->addHandler(_handler);
 }
 
-ListenerFacesRst::~ListenerFacesRst() { _listener->removeHandler(_handler); }
+ListenerFaces::~ListenerFaces() { _listener->removeHandler(_handler); }
