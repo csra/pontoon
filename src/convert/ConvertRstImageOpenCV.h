@@ -58,6 +58,7 @@ private:
 class DecodeRstVisionEncodedImage {
 public:
   ImageEncoding::UncodedPtr decode(const ImageEncoding::CodedPtr);
+  ImageEncoding::UncodedPtr decode(const rst::vision::EncodedImage&);
 };
 
 } // namespace extract

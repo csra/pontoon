@@ -60,24 +60,29 @@ EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
 
 ImageEncoding::UncodedPtr
 DecodeRstVisionEncodedImage::decode(const ImageEncoding::CodedPtr image) {
+  return decode(*image);
+}
+
+ImageEncoding::UncodedPtr
+DecodeRstVisionEncodedImage::decode(const rst::vision::EncodedImage& image) {
   try {
     auto time = boost::get_system_time();
     std::vector<unsigned char> tmp;
-    tmp.resize(image->data().size());
-    std::copy(image->data().begin(), image->data().end(), tmp.begin());
+    tmp.resize(image.data().size());
+    std::copy(image.data().begin(), image.data().end(), tmp.begin());
     boost::shared_ptr<cv::Mat> mat(new cv::Mat());
     cv::imdecode(tmp, cv::IMREAD_UNCHANGED, mat.get());
     std::cerr << ImageEncoding::typeToString(
-                     (ImageEncoding::Type)image->encoding())
+                     (ImageEncoding::Type)image.encoding())
               << " i.f.: " << std::setprecision(4) << std::fixed
-              << mat->total() * 3 / (double)image->data().size() << " ( in "
+              << mat->total() * 3 / (double)image.data().size() << " ( in "
               << (boost::get_system_time() - time).total_nanoseconds() /
                      1000000.
               << "ms)" << std::endl;
     return utils::cvhelpers::asIplImagePtr(mat);
   } catch (std::exception &e) {
     std::stringstream error;
-    error << "Cannot decode image with encoding: " << image->encoding()
+    error << "Cannot decode image with encoding: " << image.encoding()
           << "  - " << e.what();
     throw utils::Exception(error.str());
   }
