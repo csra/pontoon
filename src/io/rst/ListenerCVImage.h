@@ -27,6 +27,7 @@
 #include <rsb/Listener.h>
 #include <rsc/runtime/TypeStringTools.h>
 #include <rst/vision/EncodedImage.pb.h>
+#include <rst/vision/EncodedImageCollection.pb.h>
 
 namespace pontoon {
 namespace io {
@@ -65,6 +66,23 @@ public:
   CombinedCVImageListener(const std::string &uri);
 
   ~CombinedCVImageListener() = default;
+};
+
+class ListenerCVImageRstEncodedImageCollection
+    : public pontoon::utils::Subject<EventData<std::vector<boost::shared_ptr<IplImage>>>> {
+public:
+
+  typedef std::vector<boost::shared_ptr<IplImage>> ImagePtrVec;
+  typedef boost::shared_ptr<ImagePtrVec> ImagePtrVecPtr;
+
+  ListenerCVImageRstEncodedImageCollection(const std::string &uri);
+
+  ~ListenerCVImageRstEncodedImageCollection();
+
+private:
+  typedef pontoon::io::rst::Listener<::rst::vision::EncodedImageCollection> ListenerType;
+  ListenerType _Listener;
+  ListenerType::Connection _Connection;
 };
 
 } // namespace rst
