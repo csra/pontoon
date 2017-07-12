@@ -46,10 +46,6 @@ public:
   virtual bool valid() const { return _event.get() != nullptr; }
   virtual Cause cause() const { return _event->getId(); }
 
-  template <typename RST> boost::shared_ptr<RST> data() const {
-    return boost::static_pointer_cast<RST>(event()->getData());
-  }
-
   explicit operator bool() const { return this->valid(); }
 
 private:
@@ -64,7 +60,9 @@ public:
   EventData() : EventDataBase() {}
   EventData(EventPtr event) : EventDataBase(event) {}
 
-  DataPtr data() const { return EventDataBase::data<RST>(); }
+  DataPtr data() const {
+    return boost::static_pointer_cast<RST>(event()->getData());
+  }
 
   bool valid() const {
     return EventDataBase::valid() &&
