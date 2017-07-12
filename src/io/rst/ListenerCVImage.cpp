@@ -76,13 +76,11 @@ ListenerCVImageRstEncodedImageCollection::
       [this](EventData<::rst::vision::EncodedImageCollection> data) {
         rsb::EventPtr event(new rsb::Event(*data.event()));
         convert::DecodeRstVisionEncodedImage decoder;
-        auto images = boost::make_shared<ImagePtrVec>();
+        DataType::Data images;
         for (auto encoded_image : data.data()->element()) {
-          images->push_back(decoder.decode(encoded_image));
+          images.push_back(decoder.decode(encoded_image));
         }
-        event->setType(rsc::runtime::typeName<ImagePtrVec>());
-        event->setData(images);
-        notify(EventData<ImagePtrVec>(event));
+        notify(EventDataVector<IplImage>(event,images));
       });
 }
 

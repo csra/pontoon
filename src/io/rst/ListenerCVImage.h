@@ -69,11 +69,8 @@ public:
 };
 
 class ListenerCVImageRstEncodedImageCollection
-    : public pontoon::utils::Subject<EventData<std::vector<boost::shared_ptr<IplImage>>>> {
+    : public pontoon::utils::Subject<EventDataVector<IplImage>> {
 public:
-
-  typedef std::vector<boost::shared_ptr<IplImage>> ImagePtrVec;
-  typedef boost::shared_ptr<ImagePtrVec> ImagePtrVecPtr;
 
   ListenerCVImageRstEncodedImageCollection(const std::string &uri);
 
