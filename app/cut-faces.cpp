@@ -15,76 +15,35 @@
 **                                                                 **
 ********************************************************************/
 
-#include "convert/ConvertRstImageOpenCV.h"
-#include "convert/ScaleImageOpenCV.h"
-#include "io/rst/Informer.h"
 #include "io/rst/InformerCVImage.h"
 #include "io/rst/ListenerCVImage.h"
+#include "io/rst/ListenerFaces.h"
 #include "utils/CvHelpers.h"
+#include "utils/Subject.h"
 #include <boost/program_options.hpp>
 #include <mutex>
-#include <rst/vision/FaceWithGazeCollection.pb.h>
-#include <rst/vision/Faces.pb.h>
 
-typedef pontoon::io::rst::CombinedCVImageListener ImageListener;
-typedef pontoon::io::rst::EncodingMultiImageInformer ImageInformer;
-using pontoon::convert::ImageEncoding;
-using pontoon::convert::ScaleImageOpenCV;
-using pontoon::convert::EncodeRstVisionImage;
-using pontoon::utils::Subject;
-using rst::vision::Face;
-using rst::vision::FaceWithGazeCollection;
-using rst::vision::Faces;
-typedef pontoon::io::rst::EventData<IplImage> ImageData;
-
-struct FaceData {
-  rsb::EventPtr event;
-  std::vector<cv::Rect> faces;
-
-  FaceData(pontoon::io::rst::EventData<FaceWithGazeCollection> &data)
-      : event(data.event()) {
-    for (auto facewithgaze : data.data()->element()) {
-      if (facewithgaze.has_region()) {
-        faces.push_back(faceToRoi(facewithgaze.region()));
-      }
-    }
-  }
-
-  FaceData(pontoon::io::rst::EventData<Faces> &data) : event(data.event()) {
-    for (auto face : data.data()->faces()) {
-      if (face.has_region()) {
-        faces.push_back(faceToRoi(face));
-      }
-    }
-  }
-
-  cv::Rect faceToRoi(const Face &face) {
-    return cv::Rect(face.region().top_left().x(), face.region().top_left().y(),
-                    face.region().width(), face.region().height());
-  }
-};
+using ImageInformer = pontoon::io::rst::EncodingMultiImageInformer;
+using ImageListener = pontoon::io::rst::CombinedCVImageListener;
+using FacesListener = pontoon::io::rst::ListenerFaces;
+using ImageData = ImageListener::DataType;
+using FacesData = FacesListener::DataType;
+using ::rst::vision::Face;
 
 struct ImageAndFaceData {
-  FaceData faces;
+  FacesData faces;
   ImageData image;
   pontoon::io::Causes causes;
 
-  ImageAndFaceData(FaceData _faces, ImageData _image)
+  ImageAndFaceData(FacesData _faces, ImageData _image)
       : faces(_faces), image(_image),
-        causes{faces.event->getId(), image.event()->getId()} {}
+        causes{faces.event()->getId(), image.event()->getId()} {}
 };
 
-static std::string eventMetaInfo(rsb::EventPtr event) {
-  std::stringstream str;
-  str << event->getId();
-  return str.str();
-}
-
-class ImageFaceListener : public Subject<ImageAndFaceData> {
+class ImageFaceListener : public pontoon::utils::Subject<ImageAndFaceData> {
 public:
   ImageFaceListener(const std::string &img_uri, const std::string &face_uri)
-      : _imageListener(img_uri), _facesListener1(face_uri),
-        _facesListener2(face_uri) {
+      : _imageListener(img_uri), _facesListener(face_uri) {
     _imageListener.connect([this](ImageData data) {
       if (data.valid()) {
         std::lock_guard<std::mutex> lock(this->_mutex);
@@ -92,20 +51,10 @@ public:
         this->update();
       }
     });
-    _facesListener1.connect(
-        [this](pontoon::io::rst::EventData<FaceWithGazeCollection> data) {
-          if (data.valid()) {
-            std::lock_guard<std::mutex> lock(this->_mutex);
-            FaceData d(data);
-            // this->_faces.push_back(FaceData(data));
-            this->_faces.push_back(d);
-            this->update();
-          }
-        });
-    _facesListener2.connect([this](pontoon::io::rst::EventData<Faces> data) {
+    _facesListener.connect([this](FacesData data) {
       if (data.valid()) {
         std::lock_guard<std::mutex> lock(this->_mutex);
-        this->_faces.push_back(FaceData(data));
+        this->_faces.push_back(data);
         this->update();
       }
     });
@@ -115,12 +64,12 @@ private:
   void update() {
     auto face_it = _faces.begin();
     while (face_it != _faces.end()) {
-      FaceData &face = *face_it;
+      FacesData &face = *face_it;
       auto image_it = _images.begin();
       while (image_it != _images.end()) {
         ImageData &image = *image_it;
-        if (face.event->getCauses().find(image.event()->getId()) !=
-            face.event->getCauses().end()) {
+        if (face.event()->getCauses().find(image.event()->getId()) !=
+            face.event()->getCauses().end()) {
           // found faces corresponding to image
           this->notify(ImageAndFaceData(face, image));
           break;
@@ -137,22 +86,23 @@ private:
       }
     }
     while (_faces.size() > _max_size) {
-      std::cerr << "dropping old faces frame: "
-                << eventMetaInfo(_faces.front().event) << std::endl;
+      std::cerr << "dropping old faces frame: ";
+      _faces.front().event()->printContents(std::cerr);
+      std::cerr << std::endl;
       _faces.pop_front();
     }
     while (_images.size() > _max_size) {
-      std::cerr << "dropping old image frame: "
-                << eventMetaInfo(_images.front().event()) << std::endl;
+      std::cerr << "dropping old image frame: ";
+      _images.front().event()->printContents(std::cerr);
+      std::cerr << std::endl;
       _images.pop_front();
     }
   }
 
   ImageListener _imageListener;
-  pontoon::io::rst::Listener<FaceWithGazeCollection> _facesListener1;
-  pontoon::io::rst::Listener<Faces> _facesListener2;
+  FacesListener _facesListener;
   std::deque<ImageData> _images;
-  std::deque<FaceData> _faces;
+  std::deque<FacesData> _faces;
   size_t _max_size = 10;
   std::mutex _mutex;
 };
@@ -171,19 +121,23 @@ bool checkRoi(const cv::Rect &roi, const cv::Mat &mat) {
   return true;
 }
 
+cv::Rect faceToRoi(const Face &face) {
+  return cv::Rect(face.region().top_left().x(),
+  face.region().top_left().y(),
+                  face.region().width(), face.region().height());
+}
+
 std::vector<boost::shared_ptr<IplImage>>
 cut_faces(const ImageAndFaceData &data) {
   std::vector<boost::shared_ptr<IplImage>> result;
   cv::Mat image = cv::cvarrToMat(data.image.data().get());
-  auto faces = data.faces.faces;
-  for (auto roi : faces) {
+  auto &faces = data.faces.data();
+
+  for (const auto &face : faces) {
+    cv::Rect roi = faceToRoi(*face);
     if (checkRoi(roi, image)) {
       auto patch = boost::make_shared<cv::Mat>(image(roi));
       result.push_back(pontoon::utils::cvhelpers::asIplImagePtr(patch));
-    } else {
-      auto facesdata = boost::static_pointer_cast<FaceWithGazeCollection>(
-          data.faces.event->getData());
-      std::cerr << facesdata->DebugString() << std::endl;
     }
   }
   return result;
