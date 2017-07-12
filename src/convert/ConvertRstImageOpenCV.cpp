@@ -64,7 +64,7 @@ DecodeRstVisionEncodedImage::decode(const ImageEncoding::CodedPtr image) {
 }
 
 ImageEncoding::UncodedPtr
-DecodeRstVisionEncodedImage::decode(const rst::vision::EncodedImage& image) {
+DecodeRstVisionEncodedImage::decode(const rst::vision::EncodedImage &image) {
   try {
     auto time = boost::get_system_time();
     std::vector<unsigned char> tmp;
@@ -82,8 +82,8 @@ DecodeRstVisionEncodedImage::decode(const rst::vision::EncodedImage& image) {
     return utils::cvhelpers::asIplImagePtr(mat);
   } catch (std::exception &e) {
     std::stringstream error;
-    error << "Cannot decode image with encoding: " << image.encoding()
-          << "  - " << e.what();
+    error << "Cannot decode image with encoding: " << image.encoding() << "  - "
+          << e.what();
     throw utils::Exception(error.str());
   }
 }

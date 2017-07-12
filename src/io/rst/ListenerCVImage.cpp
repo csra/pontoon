@@ -80,7 +80,7 @@ ListenerCVImageRstEncodedImageCollection::
         for (auto encoded_image : data.data()->element()) {
           images.push_back(decoder.decode(encoded_image));
         }
-        notify(EventDataVector<IplImage>(event,images));
+        notify(EventDataVector<IplImage>(event, images));
       });
 }
 

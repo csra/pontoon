@@ -71,13 +71,13 @@ public:
 class ListenerCVImageRstEncodedImageCollection
     : public pontoon::utils::Subject<EventDataVector<IplImage>> {
 public:
-
   ListenerCVImageRstEncodedImageCollection(const std::string &uri);
 
   ~ListenerCVImageRstEncodedImageCollection();
 
 private:
-  typedef pontoon::io::rst::Listener<::rst::vision::EncodedImageCollection> ListenerType;
+  typedef pontoon::io::rst::Listener<::rst::vision::EncodedImageCollection>
+      ListenerType;
   ListenerType _Listener;
   ListenerType::Connection _Connection;
 };

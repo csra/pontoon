@@ -122,8 +122,7 @@ bool checkRoi(const cv::Rect &roi, const cv::Mat &mat) {
 }
 
 cv::Rect faceToRoi(const Face &face) {
-  return cv::Rect(face.region().top_left().x(),
-  face.region().top_left().y(),
+  return cv::Rect(face.region().top_left().x(), face.region().top_left().y(),
                   face.region().width(), face.region().height());
 }
 
