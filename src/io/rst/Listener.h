@@ -72,6 +72,29 @@ public:
   }
 };
 
+template <typename RST> class EventDataVector {
+public:
+  using EventPtr = boost::shared_ptr<rsb::Event>;
+  using Cause = ::pontoon::io::Cause;
+  using Data = std::vector<boost::shared_ptr<RST>>;
+
+  EventDataVector() {}
+  EventDataVector(EventPtr event, Data data) : _event(event), _data(data) {}
+  virtual ~EventDataVector() = default;
+
+  virtual EventPtr event() const final { return _event; }
+  virtual bool valid() const { return _event.get() != nullptr; }
+  virtual Cause cause() const { return _event->getId(); }
+
+  const Data &data() const {
+    return data;
+  }
+
+private:
+  EventPtr _event;
+  std::vector<boost::shared_ptr<RST>> _data;
+};
+
 template <typename RST> class Listener : public utils::Subject<EventData<RST>> {
 public:
   typedef std::shared_ptr<Listener<RST>> Ptr;
