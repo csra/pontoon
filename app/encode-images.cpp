@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
 
   const std::string in_scope = program_options["input-uri"].as<std::string>();
   const std::string out_scope = program_options["output-uri"].as<std::string>();
+  const std::string encoding = program_options["encoding"].as<std::string>();
   const double scale_width = program_options["scale-width"].as<double>();
   const double scale_height = program_options["scale-height"].as<double>();
   const double skip_frames = program_options["skip-frames"].as<double>();
@@ -137,9 +138,9 @@ int main(int argc, char **argv) {
   auto in = std::make_shared<SkippingSubject<ImageListener::DataType>>(
       std::make_shared<ImageListener>(in_scope), skip_frames);
 
-  ImageInformer out(out_scope, program_options["encoding"].as<std::string>(),
-                    scale_width, scale_height);
+  ImageInformer out(out_scope, encoding, scale_width, scale_height);
   auto connection = in->connect([&out](ImageListener::DataType data) {
     out.publish(data.data(), {data.id()});
   });
+  block();
 }
