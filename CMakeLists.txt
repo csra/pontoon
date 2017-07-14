@@ -72,9 +72,9 @@ endforeach()
 # rsb
 find_package(RSB REQUIRED)
 find_package(RCT REQUIRED)
-find_package(RST 0.17 REQUIRED sandbox)
-find_package(RST_EXPERIMENTAL 0.17 REQUIRED)
-find_package(rst-converters 0.17 REQUIRED)
+find_package(RST REQUIRED sandbox)
+find_package(RST_EXPERIMENTAL REQUIRED)
+find_package(rst-converters REQUIRED)
 add_definitions(${RST_CONVERTERS_CFLAGS})
 set(RSB_INCLUDE_DIRS
   ${RCT_INCLUDE_DIRS}
