@@ -18,6 +18,7 @@
 #pragma once
 
 #include "io/Cause.h"
+#include "utils/CvHelpers.h"
 #include "utils/RsbHelpers.h"
 #include "utils/Subject.h"
 #include <boost/make_shared.hpp>
@@ -38,7 +39,7 @@ public:
   typedef boost::shared_ptr<DataType> DataPtr;
 
   InformerCVImage(const std::string &uri) {
-    _Informer = utils::rsbhelpers::createInformer<DataType>(uri);
+    _Informer = utils::rsbhelpers::createInformer<IplImage>(uri);
   }
 
   virtual ~InformerCVImage() {}
@@ -48,12 +49,12 @@ public:
     for (auto cause : causes) {
       event->addCause(cause);
     }
-    event->setData(data);
+    event->setData(pontoon::utils::cvhelpers::asIplImagePtr(data));
     _Informer->publish(event);
   }
 
 private:
-  typename rsb::Informer<DataType>::Ptr _Informer;
+  typename rsb::Informer<IplImage>::Ptr _Informer;
 };
 
 class EncodingImageInformer {
