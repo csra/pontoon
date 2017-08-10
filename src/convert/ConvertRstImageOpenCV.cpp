@@ -33,16 +33,15 @@ EncodeRstVisionImage::EncodeRstVisionImage(const ImageEncoding::Type &type)
       _TypeString(std::string(".") + ImageEncoding::typeToString(type)) {}
 
 ImageEncoding::CodedPtr
-EncodeRstVisionImage::encode(const boost::shared_ptr<IplImage> image) {
+EncodeRstVisionImage::encode(const boost::shared_ptr<cv::Mat> image) {
   try {
     auto time = boost::get_system_time();
-    cv::Mat mat = cv::cvarrToMat(image.get());
     std::vector<unsigned char> result;
-    int bmpsize = mat.total() * 3;
+    int bmpsize = image->total() * 3;
     ImageEncoding::CodedPtr resultImg(
         rst::vision::EncodedImage::default_instance().New());
     resultImg->set_encoding((rst::vision::EncodedImage_Encoding)_Encoding);
-    cv::imencode(_TypeString, mat, result);
+    cv::imencode(_TypeString, *image, result);
     resultImg->set_data(result.data(), result.size());
     std::cerr << _TypeString << " c.f.: " << std::setprecision(4) << std::fixed
               << result.size() / (double)bmpsize << " ( in "
@@ -79,7 +78,7 @@ DecodeRstVisionEncodedImage::decode(const rst::vision::EncodedImage &image) {
               << (boost::get_system_time() - time).total_nanoseconds() /
                      1000000.
               << "ms)" << std::endl;
-    return utils::cvhelpers::asIplImagePtr(mat);
+    return mat;
   } catch (std::exception &e) {
     std::stringstream error;
     error << "Cannot decode image with encoding: " << image.encoding() << "  - "

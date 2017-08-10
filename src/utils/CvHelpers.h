@@ -25,6 +25,7 @@ namespace utils {
 namespace cvhelpers {
 
 boost::shared_ptr<IplImage> asIplImagePtr(boost::shared_ptr<cv::Mat> mat);
+boost::shared_ptr<cv::Mat> asMatPtr(boost::shared_ptr<IplImage> image);
 
 } // namespace cvhelpers
 } // namespace utils

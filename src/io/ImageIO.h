@@ -43,9 +43,11 @@ public:
     int _Current;
   };
 
-  static bool writeImage(const std::string &file_name,
-                         boost::shared_ptr<IplImage> image);
-  static boost::shared_ptr<IplImage> readImage(const std::string &file_name);
+  static bool writeImage(const std::string &file_name, const cv::Mat &image);
+  static bool writeIplImage(const std::string &file_name,
+                            const IplImage &image);
+  static boost::shared_ptr<cv::Mat> readImage(const std::string &file_name);
+  static boost::shared_ptr<IplImage> readIplImage(const std::string &file_name);
 };
 
 } // namespace io

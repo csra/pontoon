@@ -35,8 +35,7 @@ ImgType ScaleImageOpenCV::scale(const ImgType image) const {
   } else {
     interpol = cv::INTER_CUBIC;
   }
-  cv::Mat src = cv::cvarrToMat(image.get());
   boost::shared_ptr<cv::Mat> dst(new cv::Mat());
-  cv::resize(src, *dst, cv::Size(), _width, _height, interpol);
-  return pontoon::utils::cvhelpers::asIplImagePtr(dst);
+  cv::resize(*image, *dst, cv::Size(), _width, _height, interpol);
+  return dst;
 }

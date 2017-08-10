@@ -25,7 +25,7 @@ namespace convert {
 
 class ScaleImageOpenCV {
 public:
-  using ImgType = boost::shared_ptr<IplImage>;
+  using ImgType = boost::shared_ptr<cv::Mat>;
 
   ScaleImageOpenCV(double scale_width, double scale_height);
 

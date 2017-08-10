@@ -151,15 +151,15 @@ void scaleAndReplaceImage(std::unique_ptr<cv::Mat> &dst,
   if (!src.valid()) {
     return;
   }
-  cv::Mat tmp = cv::cvarrToMat(src.data().get());
+  const cv::Mat &tmp = *src.data().get();
   cv::Size size = getFacesImageSize(faces.data());
   if (size.area() == 0) {
-    size = cv::Size(src.data()->width, src.data()->height);
+    size = cv::Size(src.data()->cols, src.data()->rows);
   }
   if (tmp.cols != size.width || tmp.rows != size.height) {
     cv::resize(tmp, *dst, size, 0, 0, cv::INTER_LINEAR);
   } else {
-    dst.reset(new cv::Mat(tmp));
+    dst.reset(new cv::Mat(tmp.clone()));
   }
 }
 
@@ -180,7 +180,7 @@ void paintPatches(std::unique_ptr<cv::Mat> &dst, FacesListener::DataType &faces,
       continue;
     }
     cv::Rect roi = faceToRoi(*faces.data().at(i));
-    auto patch = cv::cvarrToMat(patches.data().at(i).get());
+    const cv::Mat &patch = *patches.data().at(i).get();
     if (cv::Size2i(patch.cols, patch.rows) != roi.size()) {
       std::cerr << "ERROR: face patch and face detection #" << i
                 << " have different sizes." << std::endl;

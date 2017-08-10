@@ -34,7 +34,7 @@ namespace rst {
 class InformerCVImage {
 public:
   typedef std::shared_ptr<InformerCVImage> Ptr;
-  typedef IplImage DataType;
+  typedef cv::Mat DataType;
   typedef boost::shared_ptr<DataType> DataPtr;
 
   InformerCVImage(const std::string &uri) {
@@ -59,7 +59,7 @@ private:
 class EncodingImageInformer {
 public:
   typedef std::shared_ptr<EncodingImageInformer> Ptr;
-  typedef IplImage DataType;
+  typedef cv::Mat DataType;
   typedef boost::shared_ptr<DataType> DataPtr;
 
   EncodingImageInformer(const std::string &uri,
@@ -77,7 +77,7 @@ private:
 class EncodingMultiImageInformer {
 public:
   typedef std::shared_ptr<EncodingMultiImageInformer> Ptr;
-  typedef std::vector<boost::shared_ptr<IplImage>> Data;
+  typedef std::vector<boost::shared_ptr<cv::Mat>> Data;
 
   EncodingMultiImageInformer(const std::string &uri,
                              const std::string &encoding = "none",

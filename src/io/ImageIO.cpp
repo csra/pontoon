@@ -19,6 +19,7 @@
 #include "utils/Exception.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/thread/thread_time.hpp>
 #include <iomanip>
 #include <opencv2/highgui/highgui.hpp>
@@ -45,9 +46,19 @@ std::string ImageIO::FileNameGenerator::nextFreeFilename() {
   return name;
 }
 
-bool ImageIO::writeImage(const std::string &file_name,
-                         boost::shared_ptr<IplImage> image) {
-  int written = cvSaveImage(file_name.c_str(), image.get());
+bool ImageIO::writeImage(const std::string &file_name, const cv::Mat &image) {
+  int written = cv::imwrite(file_name.c_str(), image);
+  if (written) {
+    std::cerr << "file written: " << file_name << std::endl;
+  } else {
+    std::cerr << "error writing file: " << file_name << std::endl;
+  }
+  return true;
+}
+
+bool ImageIO::writeIplImage(const std::string &file_name,
+                            const IplImage &image) {
+  int written = cvSaveImage(file_name.c_str(), &image);
   if (written) {
     std::cerr << "file written: " << file_name << std::endl;
   } else {
@@ -61,7 +72,12 @@ public:
   void operator()(IplImage *img) { cvReleaseImage(&img); }
 };
 
-boost::shared_ptr<IplImage> ImageIO::readImage(const std::string &file_name) {
+boost::shared_ptr<cv::Mat> ImageIO::readImage(const std::string &file_name) {
+  return boost::make_shared<cv::Mat>(cv::imread(file_name.c_str()));
+}
+
+boost::shared_ptr<IplImage>
+ImageIO::readIplImage(const std::string &file_name) {
   return boost::shared_ptr<IplImage>(cvLoadImage(file_name.c_str()),
                                      IplImageDeleter());
 }

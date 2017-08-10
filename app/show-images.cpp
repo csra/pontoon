@@ -149,7 +149,7 @@ private: // helper functions
     }
     for (size_t i = 0; i < _lastImages.size(); ++i) {
       if (_imageUpdated[i] && _lastImages[i].valid()) {
-        cv::Mat src = cv::cvarrToMat(_lastImages.at(i).data().get());
+        const cv::Mat &src = *_lastImages.at(i).data();
         cv::Mat roi = (*dst)(_positions.at(i));
         src.copyTo(roi);
       }

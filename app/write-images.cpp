@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
       in->connect([&mutex, &in, &fg](ImageListener::DataType image) {
         std::cout << "Image received" << std::endl;
         std::lock_guard<std::mutex> l(mutex);
-        pontoon::io::ImageIO::writeImage(fg.nextFreeFilename(), image.data());
+        pontoon::io::ImageIO::writeImage(fg.nextFreeFilename(), *image.data());
       });
 
   std::cerr << "Ready..." << std::endl;

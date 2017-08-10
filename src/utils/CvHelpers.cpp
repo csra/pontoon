@@ -20,16 +20,32 @@
 namespace {
 class CustomMatDeleter {
 private:
-  boost::shared_ptr<cv::Mat> mat;
+  boost::shared_ptr<cv::Mat> data;
 
 public:
-  CustomMatDeleter(boost::shared_ptr<cv::Mat> impl) : mat(impl) {}
+  CustomMatDeleter(boost::shared_ptr<cv::Mat> impl) : data(impl) {}
 
   void operator()(IplImage *img) { delete img; }
+};
+class CustomImageDeleter {
+private:
+  boost::shared_ptr<IplImage> data;
+
+public:
+  CustomImageDeleter(boost::shared_ptr<IplImage> impl) : data(impl) {}
+
+  void operator()(cv::Mat *img) { delete img; }
 };
 }
 
 boost::shared_ptr<IplImage>
 pontoon::utils::cvhelpers::asIplImagePtr(boost::shared_ptr<cv::Mat> mat) {
   return boost::shared_ptr<IplImage>(new IplImage(*mat), CustomMatDeleter(mat));
+}
+
+boost::shared_ptr<cv::Mat>
+pontoon::utils::cvhelpers::asMatPtr(boost::shared_ptr<IplImage> image) {
+  return boost::shared_ptr<cv::Mat>(
+      new cv::Mat(cv::cvarrToMat(image.get(), false)),
+      CustomImageDeleter(image));
 }

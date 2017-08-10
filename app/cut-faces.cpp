@@ -126,17 +126,16 @@ cv::Rect faceToRoi(const Face &face) {
                   face.region().width(), face.region().height());
 }
 
-std::vector<boost::shared_ptr<IplImage>>
+std::vector<boost::shared_ptr<cv::Mat>>
 cut_faces(const ImageAndFaceData &data) {
-  std::vector<boost::shared_ptr<IplImage>> result;
-  cv::Mat image = cv::cvarrToMat(data.image.data().get());
+  std::vector<boost::shared_ptr<cv::Mat>> result;
+  const cv::Mat &image = *data.image.data();
   auto &faces = data.faces.data();
-
   for (const auto &face : faces) {
     cv::Rect roi = faceToRoi(*face);
     if (checkRoi(roi, image)) {
       auto patch = boost::make_shared<cv::Mat>(image(roi));
-      result.push_back(pontoon::utils::cvhelpers::asIplImagePtr(patch));
+      result.push_back(patch);
     }
   }
   return result;

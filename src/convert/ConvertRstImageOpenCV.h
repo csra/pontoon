@@ -29,7 +29,7 @@ namespace convert {
 
 struct ImageEncoding {
 
-  typedef boost::shared_ptr<IplImage> UncodedPtr;
+  typedef boost::shared_ptr<cv::Mat> UncodedPtr;
   typedef boost::shared_ptr<rst::vision::EncodedImage> CodedPtr;
 
   enum Type {
