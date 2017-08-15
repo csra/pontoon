@@ -54,6 +54,32 @@ private:
   typename rsb::Informer<RST>::Ptr _Informer;
 };
 
+template <> class Informer<std::string> {
+public:
+  typedef std::shared_ptr<Informer<std::string>> Ptr;
+  typedef std::string DataType;
+  typedef boost::shared_ptr<std::string> DataPtr;
+
+  Informer(const std::string &uri) {
+    _Informer = utils::rsbhelpers::createInformer<std::string>(uri);
+  }
+
+  virtual ~Informer() {}
+
+  virtual void publish(DataPtr data, const pontoon::io::Causes &causes) {
+    auto event = _Informer->createEvent();
+    for (auto cause : causes) {
+      event->addCause(cause);
+    }
+    event->setData(data);
+    _Informer->publish(event);
+  }
+
+private:
+  typename rsb::Informer<std::string>::Ptr _Informer;
+
+};
+
 template <typename RST> class Publisher : private Informer<RST> {
 public:
   typedef std::shared_ptr<Publisher<RST>> Ptr;
