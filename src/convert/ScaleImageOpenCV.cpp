@@ -35,7 +35,7 @@ ImgType ScaleImageOpenCV::scale(const ImgType image) const {
   } else {
     interpol = cv::INTER_CUBIC;
   }
-  cv::Mat dst(cv::Size(_width, _height), image->type());
+  cv::Mat dst(cv::Size(image->cols*_width, image->rows*_height), image->type());
   cv::resize(*image, dst, dst.size(), 0, 0, interpol);
   return ImgType(new cv::Mat(dst));
 }
