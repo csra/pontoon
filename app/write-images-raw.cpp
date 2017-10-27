@@ -156,8 +156,8 @@ public:
     _last_frame_time = frame.frame_time();
     _bps(frame.num_bytes());
     if (++_counter % window_size == 0) {
-      auto fps = boost::accumulators::rolling_sum(_fps) / 1e7;
-      auto ofps = boost::accumulators::rolling_sum(_original_fps);
+      auto fps = 1e11/boost::accumulators::rolling_sum(_fps);
+      auto ofps = 1e8/boost::accumulators::rolling_sum(_original_fps);
       auto bps = boost::accumulators::rolling_sum(_bps) / window_size * fps;
       std::cerr << "frames: " << _counter << "\n           fps: " << std::left
                 << std::setw(6) << fps << "\n  original fps: " << std::left
