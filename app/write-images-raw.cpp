@@ -159,7 +159,8 @@ public:
       auto fps = 1e11/boost::accumulators::rolling_sum(_fps);
       auto ofps = 1e8/boost::accumulators::rolling_sum(_original_fps);
       auto bps = boost::accumulators::rolling_sum(_bps) / window_size * fps;
-      std::cerr << "frames: " << _counter << "\n           fps: " << std::left
+      std::cerr << "frames: " << _counter << "(# " << frame.frame_number() << ")"
+                << "\n           fps: " << std::left
                 << std::setw(6) << fps << "\n  original fps: " << std::left
                 << std::setw(6) << ofps << "\n          mbps: " << std::left
                 << std::setw(6) << bps / bytes_in_mbytes << std::endl;
