@@ -134,6 +134,31 @@ find_package(Boost 1.54 COMPONENTS date_time REQUIRED)
 # zlib
 find_package(ZLIB REQUIRED)
 
+# opencv
+find_package(OpenCV 3.0 REQUIRED COMPONENTS
+  core highgui
+  )
+
+message(STATUS "opencv_found: ${OpenCV_core_FOUND}")
+message(STATUS "opencv_libs: ${OpenCV_LIBS}")
+
+
+if(NOT ${OpenCV_core_FOUND})
+  message(FATAL_ERROR "Could not find core component in OpenCV")
+else()
+  if("${OpenCV_VERSION}" MATCHES "3.3.1")
+    if(${CMAKE_BUILD_TYPE} MATCHES "[Rr][Ee][Ll][Ww][Ii][Tt][Hh][Dd][Ee][Bb][Ii][Nn][Ff][Oo]")
+      if(${OpenCV_INSTALL_PATH} MATCHES ".*/ros/kinetic")
+        message(WARNING
+        "Building in ${CMAKE_BUILD_TYPE} mode against OpenCV ${OpenCV_VERSION} within a ros installation. "
+        "This combination may lead to OpenCV library not found errors. "
+        "Consider building in RELEASE or DEBUG mode."
+        )
+      endif()
+    endif()
+  endif()
+endif()
+
 message(STATUS "Looking for doxygen")
 find_program(DOXYGEN_BIN NAMES doxygen)
 if(NOT "${DOXYGEN_BIN}" STREQUAL "DOXYGEN_BIN-NOTFOUND")
@@ -170,6 +195,7 @@ include_directories(${Boost_INCLUDE_DIR})
 include_directories(${ZLIB_INCLUDE_DIRS})
 include_directories(BEFORE SYSTEM ${RSB_INCLUDE_DIRS})
 include_directories(BEFORE SYSTEM ${ROS_INCLUDE_DIRS})
+include_directories(BEFORE SYSTEM ${OpenCV_INCLUDE_DIRS})
 
 # add rsb-rst link directories
 link_directories(${RSB_LIBRARY_DIRS})
@@ -185,7 +211,9 @@ target_link_libraries(${PROJECT_NAME}
   ${RSB_LIBRARIES}
   ${ROS_LIBRARIES}
   ${ZLIB_LIBRARIES}
+  ${OpenCV_LIBS}
 )
+
 install(TARGETS "${PROJECT_NAME}"
         EXPORT  ${PROJECT_NAME}Targets
         RUNTIME DESTINATION bin
