@@ -22,7 +22,7 @@ project(pontoon)
 
 # the projects version number
 set(PROJECT_VERSION_MAJOR 1)
-set(PROJECT_VERSION_MINOR 8)
+set(PROJECT_VERSION_MINOR 9)
 
 # some output
 message(STATUS "")
