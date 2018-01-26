@@ -26,6 +26,7 @@
 #include <fstream>
 #include <mutex>
 #include <rsb/MetaData.h>
+#include <thread>
 
 class CapturedFrame;
 
@@ -204,6 +205,12 @@ int main(int argc, char **argv) {
       boost::program_options::value<size_t>()->default_value(150),
       "How many images to hold before starting to drop frames.");
 
+  desc.add_options()(
+      "sanity-kill,s",
+      boost::program_options::value<size_t>()->default_value(0),
+      "Stop the application if no new images arrive for passed amount of milliseconds. 0 for never.");
+
+
   desc.add_options()("print-statistics,p", "Print statistics to std::err.");
 
   ;
@@ -244,6 +251,7 @@ int main(int argc, char **argv) {
   const size_t out_buffer_size =
       program_options["buffer-size-image-out"].as<size_t>();
   const bool print_stats = program_options.count("print-statistics") > 0;
+  const auto sanity_kill_millis = program_options["sanity-kill"].as<size_t>();
 
   // init components
   std::mutex mutex;
@@ -275,7 +283,12 @@ int main(int argc, char **argv) {
   Statistics stats;
   for (;;) {
     ImageQueue::DataType frame;
-    queue.pop(frame);
+    if (sanity_kill_millis > 0 && !queue.try_pop_for(frame, std::chrono::milliseconds(sanity_kill_millis))) {
+      std::cerr << "Could not get an image for " << sanity_kill_millis << "ms. Leaving application." << std::endl;
+      break;
+    } else {
+      queue.pop(frame);
+    }
     if (frame.valid()) {
       dumper.dump_frame(frame);
     }
