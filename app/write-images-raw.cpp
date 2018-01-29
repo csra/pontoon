@@ -283,11 +283,14 @@ int main(int argc, char **argv) {
   Statistics stats;
   for (;;) {
     ImageQueue::DataType frame;
-    if (sanity_kill_millis > 0 && !queue.try_pop_for(frame, std::chrono::milliseconds(sanity_kill_millis))) {
-      std::cerr << "Could not get an image for " << sanity_kill_millis << "ms. Leaving application." << std::endl;
-      break;
-    } else {
+    if(sanity_kill_millis == 0){
       queue.pop(frame);
+    } else {
+      bool got = queue.try_pop_for(frame, std::chrono::milliseconds(sanity_kill_millis));
+      if(!got){
+        std::cerr << "Could not get an image for " << sanity_kill_millis << "ms. Leaving application." << std::endl;
+        break;
+      }
     }
     if (frame.valid()) {
       dumper.dump_frame(frame);
