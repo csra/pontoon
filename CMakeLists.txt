@@ -15,39 +15,21 @@
 #**                                                                 **
 #*********************************************************************
 
-cmake_minimum_required(VERSION 2.8.2)
+cmake_minimum_required(VERSION 3.5.1)
 
 # this sets the projects name
-project(pontoon)
-
-# the projects version number
-set(PROJECT_VERSION_MAJOR 1)
-set(PROJECT_VERSION_MINOR 10)
+project(pontoon VERSION 2.0.0 LANGUAGES CXX)
 
 # some output
 message(STATUS "")
 message(STATUS "==============================================================")
-message(STATUS "Configuring ${PROJECT_NAME}:")
+message(STATUS "Configuring ${PROJECT_NAME} v${PROJECT_VERSION}:")
 
-# add c++11 compiler flag
-include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
-if(COMPILER_SUPPORTS_CXX14)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
-else()
-  message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++14 support. Please use a different C++ compiler.")
-endif()
-
+option(BUILD_WITH_ROS "Build with ros" OFF)
 
 # adding cmake module path
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
-include(FindDependency)
-
-# checking build type, setting to release when not set
-IF(NOT CMAKE_BUILD_TYPE)
-  MESSAGE(STATUS "No Specific build type specified: using Release")
-  SET(CMAKE_BUILD_TYPE "Release")
-ENDIF()
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+#include(FindDependency)
 
 # Offer the user the choice of overriding the installation directories
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
@@ -65,14 +47,12 @@ foreach(p LIB BIN INCLUDE CMAKE)
   endif()
 endforeach()
 
-
 # rsb
 find_package(RSB REQUIRED)
 find_package(RCT REQUIRED)
 find_package(RST REQUIRED sandbox)
 find_package(RST_EXPERIMENTAL REQUIRED)
 find_package(rst-converters REQUIRED)
-add_definitions(${RST_CONVERTERS_CFLAGS})
 set(RSB_INCLUDE_DIRS
   ${RCT_INCLUDE_DIRS}
   ${RSB_INCLUDE_DIRS}
@@ -101,6 +81,7 @@ set(RSB_DEFINITIONS
   )
 
 # ros
+if(BUILD_WITH_ROS)
 find_package(sensor_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(roscpp REQUIRED)
@@ -127,6 +108,7 @@ set(ROS_LIBRARIES
     ${std_msgs_LIBRARIES}
     ${image_transport_LIBRARIES}
     )
+endif(BUILD_WITH_ROS)
 
 # boost
 find_package(Boost 1.54 COMPONENTS date_time REQUIRED)
@@ -182,71 +164,8 @@ configure_file(
   "${PROJECT_BINARY_DIR}/Doxyfile"
 )
 
-# get all header files
-FILE(GLOB HEADERS "${PROJECT_SOURCE_DIR}/src/*.h")
-# get all sources
-FILE(GLOB_RECURSE SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
-# get all apps
-FILE(GLOB APPS "${PROJECT_SOURCE_DIR}/app/*.cpp")
-
-# add all headers
-include_directories("${PROJECT_SOURCE_DIR}/src/")
-include_directories(${Boost_INCLUDE_DIR})
-include_directories(${ZLIB_INCLUDE_DIRS})
-include_directories(BEFORE SYSTEM ${RSB_INCLUDE_DIRS})
-include_directories(BEFORE SYSTEM ${ROS_INCLUDE_DIRS})
-include_directories(BEFORE SYSTEM ${OpenCV_INCLUDE_DIRS})
-
-# add rsb-rst link directories
-link_directories(${RSB_LIBRARY_DIRS})
-link_directories(${ROS_LIBRARY_DIRS})
-
-#add rst definitions
-add_definitions(${RSB_DEFINITIONS})
-
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-#create library
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
-target_link_libraries(${PROJECT_NAME}
-  ${RSB_LIBRARIES}
-  ${ROS_LIBRARIES}
-  ${ZLIB_LIBRARIES}
-  ${OpenCV_LIBS}
-)
-
-install(TARGETS "${PROJECT_NAME}"
-        EXPORT  ${PROJECT_NAME}Targets
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib/static
-        PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE
-)
-
-
-######  creating executables #####
-foreach(APP ${APPS})
-  STRING(REGEX REPLACE "/.*/" "" APP ${APP})
-  STRING(REGEX REPLACE "[.]cpp" "" APP ${APP})
-  message(STATUS "-- Adding executable: ${APP}")
-
-  add_executable("${PROJECT_NAME}-${APP}"
-    "${PROJECT_SOURCE_DIR}/app/${APP}.cpp"
-  )
-
-  target_link_libraries("${PROJECT_NAME}-${APP}"
-    ${ICL_LIBRARIES}
-    ${OPENNI2_LIBRARIES}
-    ${PROJECT_NAME}
-  )
-
-  install(TARGETS "${PROJECT_NAME}-${APP}"
-          RUNTIME DESTINATION bin
-          LIBRARY DESTINATION lib
-          ARCHIVE DESTINATION lib/static
-          PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE
-         )
-endforeach(APP)
-
+add_subdirectory(src)
+add_subdirectory(app)
 
 ##### setup cmake config #####
 # Project name in caps
