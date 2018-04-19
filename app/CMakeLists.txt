@@ -21,6 +21,7 @@ set(APPS
   encode-images.cpp
   rsb-server.cpp
   send-image.cpp
+  send-stream.cpp
   show-face-patches.cpp
   show-images.cpp
   write-images.cpp
